@@ -20,21 +20,93 @@ function getBoards() {
     };
 };
 
-function createBoard(){
-    var createButton = document.getElementById('create-button');
-    createButton.style.display = 'none';
-    var boardInput = document.getElementById('new-board');
-    boardInput.style.display = 'block';
-    document.getElementById("title").focus();
+function createTitle(buttonType){
+    removeable = document.getElementById(buttonType);
+    if (removeable !== null){
+        removeable.outerHTML = '';
+    }
+    var remove = document.createElement('span');
+    remove.className = 'glyphicon glyphicon-remove';
+
+    var removeButton = document.createElement('button');
+    removeButton.type = 'button';
+    removeButton.className = 'btn btn-secondary';
+    removeButton.setAttribute('onclick', 'newButton("' + buttonType + '")');
+
+    var saveButton = document.createElement('button');
+    saveButton.type = 'button';
+    saveButton.className = 'btn btn-primary';
+    if (buttonType === 'boards'){
+        saveButton.setAttribute('onclick', 'saveBoard()');
+    } else {
+        saveButton.setAttribute('onclick', 'saveCard("' + buttonType + '")');
+    }
+    saveButton.innerHTML = 'Save';
+
+    var buttonSpan = document.createElement('span');
+    buttonSpan.className = 'input-group-btn';
+
+    var inputField = document.createElement('input');
+    inputField.type = 'text';
+    inputField.className = 'form-control';
+    inputField.id = 'title';
+
+    var inputDiv = document.createElement('div');
+    inputDiv.className = 'input-group';
+
+    var inputPanel = document.createElement('div');
+    inputPanel.className = 'panel panel-default';
+
+    removeButton.appendChild(remove);
+    buttonSpan.appendChild(saveButton);
+    buttonSpan.appendChild(removeButton);
+    inputDiv.appendChild(inputField);
+    inputDiv.appendChild(buttonSpan);
+    inputPanel.appendChild(inputDiv);
+    if (buttonType !== 'boards'){
+        inputPanel.id = buttonType;
+        var appendTo = document.getElementById('card-list');
+    } else {
+        var inputCol = document.createElement('div');
+        inputCol.id = buttonType;
+        inputCol.className = 'col-xs-3';
+        inputCol.appendChild(inputPanel);
+        inputPanel = inputCol;
+        var appendTo = document.getElementById('boards_div');
+    };
+    appendTo.appendChild(inputPanel);
 };
 
 function newButton(buttonType){
-    var createButton = document.getElementById('create-button');
-    createButton.style.display = 'block';
-    var boardInput = document.getElementById('new-board');
-    boardInput.style.display = 'none';
-    var inputField = document.getElementById('title');
-    inputField.value = '';
+    removeable = document.getElementById(buttonType);
+    if (removeable !== null){
+        removeable.outerHTML = '';
+    }
+    var plus = document.createElement('span');
+    plus.className = 'glyphicon glyphicon-plus';
+
+    var plusButton = document.createElement('button');
+    plusButton.type = 'button';
+    plusButton.className = 'btn btn-info btn-primary btn-block';
+
+    var plusPanel = document.createElement('div');
+    plusPanel.className = 'panel panel-default';
+    plusPanel.setAttribute('onclick', 'createTitle("' + buttonType + '")');
+    plusButton.appendChild(plus);
+    plusPanel.appendChild(plusButton);
+    if (buttonType !== 'boards'){
+        plusPanel.id = buttonType;
+        var appendTo = document.getElementById('card-list');
+
+    } else {
+        var plusCol = document.createElement('div');
+        plusCol.id = buttonType;
+        plusCol.className = 'col-xs-3';
+        plusCol.appendChild(plusPanel);
+        plusPanel = plusCol;
+        var appendTo = document.getElementById('boards_div');
+    };
+    appendTo.appendChild(plusPanel);
 };
 
 function displayBoards(){
@@ -45,7 +117,7 @@ function displayBoards(){
                 var currentBoard = getBoards()[i].id;
                 colDiv.id = currentBoard;
                 colDiv.className = 'col-xs-3';
-                colDiv.setAttribute('onclick', 'displayCards(' + currentBoard + ')');
+                colDiv.setAttribute('onclick', 'displayCards("' + currentBoard + '")');
                 var panelDiv = document.createElement('div');
                 panelDiv.className = 'panel panel-default';
                 var panelHead = document.createElement('div');
@@ -57,7 +129,7 @@ function displayBoards(){
             };
         };
     };
-    document.getElementById("boards_div").appendChild(newButton("boards"));
+    newButton("boards");
 };
 
 function displayCards(boardID){
@@ -73,6 +145,7 @@ function displayCards(boardID){
     panelBody.className ='panel-body';
     var list = document.createElement('ul');
     list.className = 'list-group';
+    list.id = 'card-list';
     var allCards = getCardsByBoard(boardID);
     if (allCards) {
         for(var i=allCards.length-1; i >= 0; i--) {
