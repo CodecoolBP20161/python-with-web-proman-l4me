@@ -21,9 +21,12 @@
                 <div id ="new-board" class="col-xs-3" style="display: none;">
                     <div class="panel panel-default">
                             <div class="input-group">
-                                <input id="title" type="text" class="form-control" placeholder="" onfocusout="newButton()">
+                                <input id="title" type="text" class="form-control" placeholder="">
                                 <span class="input-group-btn">
-                                    <button class="btn btn-secondary" type="button" onclick="saveBoard()">Save</button>
+                                    <button class="btn btn-primary" type="button" onclick="saveBoard()">Save</button>
+                                    <button class="btn btn-secondary" type="button" onclick="newButton()">
+                                        <span class="glyphicon glyphicon-remove"></span>
+                                    </button>
                                 </span>
                             </div>
                     </div>

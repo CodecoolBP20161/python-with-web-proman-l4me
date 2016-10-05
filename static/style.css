@@ -9,3 +9,5 @@
   display: flex;
   flex-direction: column;
 }
+
+.panel { word-wrap: break-word; }
