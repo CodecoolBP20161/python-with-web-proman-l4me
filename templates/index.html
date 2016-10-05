@@ -4,26 +4,35 @@
         <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
         <link rel="shortcut icon" href="{{url_for('static', filename='codecool_icon.png')}}">
         <link rel="stylesheet" href="https://bootswatch.com/cerulean/bootstrap.min.css">
-        <script src="{{ url_for('static', filename='script.js')}}"></script>
+        <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
         <title>L4Me ProMan</title>
     </head>
     <body>
         <div class="container-fluid">
             <h1>ProMan <small>by L4Me</small></h1>
-            <div class="row">
-                <div class="col-xs-3">
-                    <div class="well">Basic Well</div>
+            <div class="row" align="left" id="boards_div">
+                <div id="create-button" class="col-xs-3">
+                    <div class="panel panel-default" onclick="createBoard()">
+                            <button type="button" class="btn btn-info btn-primary btn-block">
+                                <span class="glyphicon glyphicon-plus"></span>
+                            </button>
+                    </div>
                 </div>
-                <div class="col-xs-3">
-                    <div class="well">Basic Well</div>
-                </div>
-                <div class="col-xs-3">
-                    <div class="well">Basic Well</div>
-                </div>
-                <div class="col-xs-3">
-                    <div class="well">Basic Well</div>
+                <div id ="new-board" class="col-xs-3" style="display: none;">
+                    <div class="panel panel-default">
+                            <div class="input-group">
+                                <input id="title" type="text" class="form-control" placeholder="">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-primary" type="button" onclick="saveBoard()">Save</button>
+                                    <button class="btn btn-secondary" type="button" onclick="newButton()">
+                                        <span class="glyphicon glyphicon-remove"></span>
+                                    </button>
+                                </span>
+                            </div>
+                    </div>
                 </div>
             </div>
         </div>
+        <script src="{{ url_for('static', filename='script.js')}}"></script>
     </body>
 </html>
