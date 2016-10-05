@@ -1,13 +1,21 @@
 function saveBoard() {
-    var newBoard = {title: document.getElementById('title').value, id: nextId()};
-    var boards = getBoards();
-    if (boards){
-        boards.push(newBoard);
-    } else {
-        boards = [newBoard];
+    if (document.getElementById('title').value !== "") {
+        var newBoard = {title: document.getElementById('title').value, id: nextId()};
+        var boards = getBoards();
+        if (boards){
+            boards.push(newBoard);
+        } else {
+            boards = [newBoard];
+        }
+        var cards = JSON.parse(localStorage.getItem('cards'));
+        if(cards === null){
+            cards = {}
+        }
+        cards[newBoard['id']] = [];
+        localStorage.setItem('boards', JSON.stringify(boards));
+        localStorage.setItem('cards', JSON.stringify(cards));
+        displayBoards();
     }
-    localStorage.setItem('boards', JSON.stringify(boards));
-    displayBoards();
 };
 
 function getBoards() {
@@ -18,6 +26,23 @@ function getBoards() {
         boards = JSON.parse(boards);
         return boards;
     };
+};
+
+function saveCard(boardID) {
+    if (document.getElementById('title').value !== "") {
+        var newCard = {title: document.getElementById('title').value, id: nextId()};
+        var cards = JSON.parse(localStorage.getItem('cards'));
+        cards[boardID].push(newCard);
+        localStorage.setItem('cards', JSON.stringify(cards));
+        displayCards(boardID);
+    };
+};
+
+function getCardsByBoard(boardID) {
+    var allCards = localStorage.getItem('cards');
+    allCards = JSON.parse(allCards);
+    cards = allCards[boardID];
+    return cards;
 };
 
 function createTitle(buttonType){
@@ -64,17 +89,17 @@ function createTitle(buttonType){
     inputDiv.appendChild(buttonSpan);
     inputPanel.appendChild(inputDiv);
     if (buttonType !== 'boards'){
-        inputPanel.id = buttonType;
+        var inputFrame = inputPanel;
+        inputFrame.id = buttonType;
         var appendTo = document.getElementById('card-list');
     } else {
-        var inputCol = document.createElement('div');
-        inputCol.id = buttonType;
-        inputCol.className = 'col-xs-3';
-        inputCol.appendChild(inputPanel);
-        inputPanel = inputCol;
+        var inputFrame = document.createElement('div');
+        inputFrame.className = 'col-sm-3';
+        inputFrame.id = buttonType;
+        inputFrame.appendChild(inputPanel);
         var appendTo = document.getElementById('boards_div');
     };
-    appendTo.appendChild(inputPanel);
+    appendTo.appendChild(inputFrame);
 };
 
 function newButton(buttonType){
@@ -95,28 +120,29 @@ function newButton(buttonType){
     plusButton.appendChild(plus);
     plusPanel.appendChild(plusButton);
     if (buttonType !== 'boards'){
-        plusPanel.id = buttonType;
+        var plusFrame = plusPanel;
+        plusFrame.id = buttonType;
         var appendTo = document.getElementById('card-list');
 
     } else {
-        var plusCol = document.createElement('div');
-        plusCol.id = buttonType;
-        plusCol.className = 'col-xs-3';
-        plusCol.appendChild(plusPanel);
-        plusPanel = plusCol;
+        var plusFrame = document.createElement('div');
+        plusFrame.id = buttonType;
+        plusFrame.className = 'col-sm-3';
+        plusFrame.appendChild(plusPanel);
         var appendTo = document.getElementById('boards_div');
     };
-    appendTo.appendChild(plusPanel);
+    appendTo.appendChild(plusFrame);
 };
 
 function displayBoards(){
+    document.getElementById("boards_div").innerHTML = "";
     if (getBoards()){
         for(var i=0; i < getBoards().length; i++){
             if(document.getElementById(getBoards()[i].id) === null){
                 var colDiv = document.createElement('div');
                 var currentBoard = getBoards()[i].id;
                 colDiv.id = currentBoard;
-                colDiv.className = 'col-xs-3';
+                colDiv.className = 'col-sm-3';
                 colDiv.setAttribute('onclick', 'displayCards("' + currentBoard + '")');
                 var panelDiv = document.createElement('div');
                 panelDiv.className = 'panel panel-default';
@@ -135,32 +161,40 @@ function displayBoards(){
 function displayCards(boardID){
     document.getElementById("boards_div").innerHTML = "";
     var colDiv = document.createElement('div');
-    colDiv.className = 'col-xs-3';
+    colDiv.className = 'col-sm-3';
     var panelDiv = document.createElement('div');
     panelDiv.className = 'panel panel-default';
     var panelHead = document.createElement('div');
     panelHead.className = 'panel-heading';
-    panelHead.innerHTML = getBoards()[boardID].title;
+    for(var item in getBoards()){
+        if(getBoards()[item]['id'] === parseInt(boardID)){
+            var backBtn = document.createElement('span');
+            backBtn.className = 'glyphicon glyphicon-chevron-left';
+            backBtn.setAttribute('onclick', 'displayBoards()');
+            panelHead.appendChild(backBtn);
+            panelHead.innerHTML += getBoards()[item].title;
+        };
+    };
     var panelBody = document.createElement('div');
     panelBody.className ='panel-body';
-    var list = document.createElement('ul');
-    list.className = 'list-group';
-    list.id = 'card-list';
+    panelBody.id = 'card-list'
+    var listFrame = document.createElement('ul');
+    listFrame.className = 'list-group';
     var allCards = getCardsByBoard(boardID);
     if (allCards) {
         for(var i=allCards.length-1; i >= 0; i--) {
             var listItem = document.createElement('li');
             listItem.className = 'list-group-item';
             listItem.innerHTML = allCards[i].title;
-            list.appendChild(listItem);
+            listFrame.appendChild(listItem);
         };
     };
-    list.appendChild(newButton(boardID));
-    panelBody.appendChild(list);
+    panelBody.appendChild(listFrame);
     panelDiv.appendChild(panelHead);
     panelDiv.appendChild(panelBody);
     colDiv.appendChild(panelDiv);
     document.getElementById("boards_div").appendChild(colDiv);
+    newButton(boardID);
 };
 
 function nextId(){

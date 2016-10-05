@@ -10,4 +10,10 @@
   flex-direction: column;
 }
 
-.panel { word-wrap: break-word; }
+.panel {
+    word-wrap: break-word;
+}
+
+.glyphicon-chevron-left {
+    padding-right: 15px;
+}
