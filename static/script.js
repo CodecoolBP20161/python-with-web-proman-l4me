@@ -28,7 +28,7 @@ function createBoard(){
     document.getElementById("title").focus();
 };
 
-function newButton(){
+function newButton(buttonType){
     var createButton = document.getElementById('create-button');
     createButton.style.display = 'block';
     var boardInput = document.getElementById('new-board');
@@ -42,9 +42,10 @@ function displayBoards(){
         for(var i=0; i < getBoards().length; i++){
             if(document.getElementById(getBoards()[i].id) === null){
                 var colDiv = document.createElement('div');
-                colDiv.id = getBoards()[i].id;
+                var currentBoard = getBoards()[i].id;
+                colDiv.id = currentBoard;
                 colDiv.className = 'col-xs-3';
-                //div.innerHTML = getBoards()[i].title;
+                colDiv.setAttribute('onclick', 'displayCards(' + currentBoard + ')');
                 var panelDiv = document.createElement('div');
                 panelDiv.className = 'panel panel-default';
                 var panelHead = document.createElement('div');
@@ -56,7 +57,37 @@ function displayBoards(){
             };
         };
     };
-    newButton();
+    document.getElementById("boards_div").appendChild(newButton("boards"));
+};
+
+function displayCards(boardID){
+    document.getElementById("boards_div").innerHTML = "";
+    var colDiv = document.createElement('div');
+    colDiv.className = 'col-xs-3';
+    var panelDiv = document.createElement('div');
+    panelDiv.className = 'panel panel-default';
+    var panelHead = document.createElement('div');
+    panelHead.className = 'panel-heading';
+    panelHead.innerHTML = getBoards()[boardID].title;
+    var panelBody = document.createElement('div');
+    panelBody.className ='panel-body';
+    var list = document.createElement('ul');
+    list.className = 'list-group';
+    var allCards = getCardsByBoard(boardID);
+    if (allCards) {
+        for(var i=allCards.length-1; i >= 0; i--) {
+            var listItem = document.createElement('li');
+            listItem.className = 'list-group-item';
+            listItem.innerHTML = allCards[i].title;
+            list.appendChild(listItem);
+        };
+    };
+    list.appendChild(newButton(boardID));
+    panelBody.appendChild(list);
+    panelDiv.appendChild(panelHead);
+    panelDiv.appendChild(panelBody);
+    colDiv.appendChild(panelDiv);
+    document.getElementById("boards_div").appendChild(colDiv);
 };
 
 function nextId(){
