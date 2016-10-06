@@ -36,3 +36,7 @@
 .panel-default>.tile-pink {
   background-color: #e671b8;
 }
+
+.right-icon {
+    float: right;
+}

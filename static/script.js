@@ -28,6 +28,20 @@ function getBoards() {
     };
 };
 
+function deleteBoard(boardID) {
+    var allCards = JSON.parse(localStorage.getItem('cards'));
+    delete allCards[boardID];
+    localStorage.setItem('cards', JSON.stringify(allCards))
+    var allBoards = getBoards();
+    for (var item in allBoards) {
+        if(allBoards[item]['id'] === parseInt(boardID)) {
+            allBoards.splice(item, 1);
+        };
+    };
+    localStorage.setItem('boards', JSON.stringify(allBoards));
+    displayBoards();
+};
+
 function getBoard(boardID) {
     colour = 0;
     for(var item in getBoards()){
@@ -79,6 +93,7 @@ function createTitle(buttonType){
     } else {
         saveButton.setAttribute('onclick', 'saveCard("' + buttonType + '")');
     }
+    saveButton.disabled = true;
     saveButton.innerHTML = 'Save';
 
     var buttonSpan = document.createElement('span');
@@ -116,15 +131,17 @@ function createTitle(buttonType){
     appendTo.appendChild(inputFrame);
     inputField.setAttribute('onkeyup', 'checkAvailable()');
     document.getElementById("title").focus();
+
 };
 
 function checkAvailable() {
-    var button = document.getElementById('save-button');
-        if (document.getElementById('title').value.length !== 0){
-            button.disabled = false;
-        } else {
-            button.disabled = true;
-        };
+   var button = document.getElementById('save-button');
+       if (document.getElementById('title').value !== ''){
+           console.log(document.getElementById('title').value);
+           button.disabled = false;
+       } else {
+           button.disabled = true;
+       };
 };
 
 function newButton(buttonType){
@@ -141,7 +158,6 @@ function newButton(buttonType){
 
     var plusPanel = document.createElement('div');
     plusPanel.className = 'panel panel-default';
-    plusPanel.setAttribute('onclick', 'createTitle("' + buttonType + '")');
     plusButton.appendChild(plus);
     plusPanel.appendChild(plusButton);
     if (buttonType !== 'boards'){
@@ -156,7 +172,10 @@ function newButton(buttonType){
         plusFrame.appendChild(plusPanel);
         var appendTo = document.getElementById('boards_div');
     };
+    plusFrame.setAttribute('onclick', 'createTitle("' + buttonType + '")');
     appendTo.appendChild(plusFrame);
+    document.body.setAttribute('onkeyup', "if (event.keyCode == 73) document.getElementById('" + buttonType + "').click()");
+
 };
 
 function displayBoards(){
@@ -170,14 +189,23 @@ function displayBoards(){
                 var colDiv = document.createElement('div');
                 colDiv.id = currentBoard;
                 colDiv.className = 'col-xs-12 col-sm-6 col-md-4 col-lg-3 col-xl-2';
-                colDiv.setAttribute('onclick', 'displayCards("' + currentBoard + '")');
 
                 var panelDiv = document.createElement('div');
                 panelDiv.className =  'panel panel-default ';
 
+                var remove = document.createElement('span');
+                remove.className = 'right-icon glyphicon glyphicon-remove';
+                remove.setAttribute('onclick', 'deleteBoard("' + currentBoard + '")');
+
+                var edit = document.createElement('span');
+                edit.className = 'right-icon glyphicon glyphicon-pencil';
+                edit.setAttribute('onclick', 'displayCards("' + currentBoard + '")');
+
                 var panelHead = document.createElement('div');
                 panelHead.className = colourPicker(colour % 6) + ' panel-heading';
                 panelHead.innerHTML = getBoards()[i].title;
+                panelHead.appendChild(remove);
+                panelHead.appendChild(edit);
 
                 panelDiv.appendChild(panelHead);
                 colDiv.appendChild(panelDiv);
