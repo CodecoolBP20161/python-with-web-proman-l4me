@@ -114,8 +114,17 @@ function createTitle(buttonType){
         var appendTo = document.getElementById('boards_div');
     };
     appendTo.appendChild(inputFrame);
+    inputField.setAttribute('onkeyup', 'checkAvailable()');
     document.getElementById("title").focus();
+};
 
+function checkAvailable() {
+    var button = document.getElementById('save-button');
+        if (document.getElementById('title').value.length !== 0){
+            button.disabled = false;
+        } else {
+            button.disabled = true;
+        };
 };
 
 function newButton(buttonType){
