@@ -10,4 +10,34 @@
   flex-direction: column;
 }
 
-.panel { word-wrap: break-word; }
+.panel {
+    word-wrap: break-word;
+}
+
+.glyphicon-chevron-left {
+    padding-right: 15px;
+}
+
+.panel-default>.tile-blue {
+  background-color: #f1c40f;
+}
+.panel-default>.tile-green {
+  background-color: #00aba9;
+}
+.panel-default>.tile-red {
+  background-color: #e74c3c;
+}
+.panel-default>.tile-lime {
+    background-color: #8cbf26;
+}
+.panel-default>.tile-purple {
+    background-color: #e67e22;
+}
+.panel-default>.tile-pink {
+  background-color: #e671b8;
+}
+
+.right-icon {
+    float: right;
+    padding: 2px;
+}
