@@ -69,6 +69,7 @@ function createTitle(buttonType){
     var saveButton = document.createElement('button');
     saveButton.type = 'button';
     saveButton.className = 'btn btn-primary';
+    saveButton.id = 'save-button';
     if (buttonType === 'boards'){
         saveButton.setAttribute('onclick', 'saveBoard()');
     } else {
@@ -83,6 +84,7 @@ function createTitle(buttonType){
     inputField.type = 'text';
     inputField.className = 'form-control';
     inputField.id = 'title';
+    inputField.setAttribute('onkeydown', "if (event.keyCode == 13) document.getElementById('save-button').click()");
 
     var inputDiv = document.createElement('div');
     inputDiv.className = 'input-group';
