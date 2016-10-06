@@ -110,6 +110,7 @@ function createTitle(buttonType){
         var appendTo = document.getElementById('boards_div');
     };
     appendTo.appendChild(inputFrame);
+    document.getElementById("title").focus();
 };
 
 function newButton(buttonType){
