@@ -1,11 +1,8 @@
 function saveCard(boardID) {
     if (document.getElementById('title').value !== "") {
-        //define new card
-        var newCard = {title: document.getElementById('title').value, id: nextId()};
-
         //update cards list
         var cards = JSON.parse(localStorage.getItem('cards'));
-        cards[boardID].push(newCard);
+        cards[boardID].push({title: document.getElementById('title').value, id: nextId()});
 
         //save changes
         localStorage.setItem('cards', JSON.stringify(cards));
@@ -25,9 +22,8 @@ function deleteCard(boardID, cardID) {
 
 function getCard(boardID, cardID) {
     //load selected card
-    var cards=JSON.parse(localStorage.getItem('cards'));
-    var boardCards = cards[parseInt(boardID)];
-    for( var i=0; i < boardCards.length; i++){
+    var boardCards = JSON.parse(localStorage.getItem('cards'))[parseInt(boardID)];
+    for(var i in boardCards){
         if(boardCards[i].id === parseInt(cardID)){
             return i;
         };
@@ -36,10 +32,7 @@ function getCard(boardID, cardID) {
 
 function getCardsByBoard(boardID) {
     //load cards list
-    var allCards = localStorage.getItem('cards');
-    allCards = JSON.parse(allCards);
-    var cards = allCards[boardID];
-    return cards;
+    return JSON.parse(localStorage.getItem('cards'))[boardID];
 };
 
 function displayCards(boardID){
@@ -56,8 +49,7 @@ function displayCards(boardID){
 
     //board content
     var panelHead = document.createElement('div');
-    var board = getBoard(boardID);
-    panelHead.className = colourPicker(board.colour) + ' panel-heading';
+    panelHead.className = colourPicker(getBoard(boardID).colour) + ' panel-heading';
 
     //back button
     var backBtn = document.createElement('span');
@@ -75,8 +67,7 @@ function displayCards(boardID){
     listFrame.className = 'list-group';
     var allCards = getCardsByBoard(boardID);
     if (allCards) {
-        for(var i=allCards.length-1; i >= 0; i--) {
-
+        for(var i in allCards) {
             //cards content
             var listItem = document.createElement('li');
             listItem.className = 'list-group-item';
@@ -89,13 +80,13 @@ function displayCards(boardID){
 
             //insert card to list
             listItem.appendChild(remove);
-            listFrame.appendChild(listItem);
+            listFrame.insertBefore(listItem, listFrame.firstChild);
         };
     };
 
     //update html
     panelHead.appendChild(backBtn);
-    panelHead.innerHTML += board.title;
+    panelHead.innerHTML += getBoard(boardID).title;
     panelBody.appendChild(listFrame);
     panelDiv.appendChild(panelHead);
     panelDiv.appendChild(panelBody);

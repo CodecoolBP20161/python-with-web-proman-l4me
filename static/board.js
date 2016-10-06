@@ -32,9 +32,9 @@ function deleteBoard(boardID) {
 
     //delete selected board
     var allBoards = getBoards();
-    for (var item in allBoards) {
-        if(allBoards[item]['id'] === parseInt(boardID)) {
-            allBoards.splice(item, 1);
+    for (var i in allBoards) {
+        if(allBoards[i].id === parseInt(boardID)) {
+            allBoards.splice(i, 1);
         };
     };
 
@@ -46,14 +46,12 @@ function deleteBoard(boardID) {
 
 function getBoard(boardID) {
     //load selected board
-    colour = 0;
-    for(var item in getBoards()){
-        if(getBoards()[item]['id'] === parseInt(boardID)){
-            board = getBoards()[item];
-            board['colour'] = colour % 6;
+    for(var i in getBoards()){
+        if(getBoards()[i].id === parseInt(boardID)){
+            board = getBoards()[i];
+            board['colour'] = i % 6;
             return board;
         };
-        colour++;
     };
 };
 
@@ -73,8 +71,7 @@ function displayBoards(){
     document.getElementById("boards_div").innerHTML = "";
 
     if (getBoards()){
-        colour = 0;
-        for(var i=0; i < getBoards().length; i++){
+        for(var i in getBoards()){
             if(document.getElementById(getBoards()[i].id) === null){
                 //load board
                 var currentBoard = getBoards()[i].id;
@@ -100,7 +97,7 @@ function displayBoards(){
 
                 //board content
                 var panelHead = document.createElement('div');
-                panelHead.className = colourPicker(colour % 6) + ' panel-heading';
+                panelHead.className = colourPicker(i % 6) + ' panel-heading';
                 panelHead.innerHTML = getBoards()[i].title;
 
                 //update html
@@ -109,7 +106,6 @@ function displayBoards(){
                 panelDiv.appendChild(panelHead);
                 colDiv.appendChild(panelDiv);
                 document.getElementById("boards_div").insertBefore(colDiv, document.getElementById("boards_div").firstChild);
-                colour++;
             };
         };
     };
