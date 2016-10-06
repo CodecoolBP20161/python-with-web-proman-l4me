@@ -29,10 +29,14 @@ function getBoards() {
 };
 
 function getBoard(boardID) {
+    colour = 0;
     for(var item in getBoards()){
         if(getBoards()[item]['id'] === parseInt(boardID)){
-            return getBoards()[item];
+            board = getBoards()[item];
+            board['colour'] = colour % 6;
+            return board;
         };
+        colour++;
     };
 };
 
@@ -111,6 +115,7 @@ function createTitle(buttonType){
     };
     appendTo.appendChild(inputFrame);
     document.getElementById("title").focus();
+
 };
 
 function newButton(buttonType){
@@ -148,6 +153,7 @@ function newButton(buttonType){
 function displayBoards(){
     document.getElementById("boards_div").innerHTML = "";
     if (getBoards()){
+        colour = 0;
         for(var i=0; i < getBoards().length; i++){
             if(document.getElementById(getBoards()[i].id) === null){
                 var currentBoard = getBoards()[i].id;
@@ -158,15 +164,16 @@ function displayBoards(){
                 colDiv.setAttribute('onclick', 'displayCards("' + currentBoard + '")');
 
                 var panelDiv = document.createElement('div');
-                panelDiv.className = 'panel panel-default';
+                panelDiv.className =  'panel panel-default ';
 
                 var panelHead = document.createElement('div');
-                panelHead.className = 'panel-heading';
+                panelHead.className = colourPicker(colour % 6) + ' panel-heading';
                 panelHead.innerHTML = getBoards()[i].title;
 
                 panelDiv.appendChild(panelHead);
                 colDiv.appendChild(panelDiv);
                 document.getElementById("boards_div").insertBefore(colDiv, document.getElementById("boards_div").firstChild);
+                colour++;
             };
         };
     };
@@ -182,13 +189,14 @@ function displayCards(boardID){
     panelDiv.className = 'panel panel-default';
 
     var panelHead = document.createElement('div');
-    panelHead.className = 'panel-heading';
+    var board = getBoard(boardID);
+    panelHead.className = colourPicker(board.colour) + ' panel-heading';
 
     var backBtn = document.createElement('span');
     backBtn.className = 'glyphicon glyphicon-chevron-left';
     backBtn.setAttribute('onclick', 'displayBoards()');
     panelHead.appendChild(backBtn);
-    panelHead.innerHTML += getBoard(boardID).title;
+    panelHead.innerHTML += board.title;
 
     var panelBody = document.createElement('div');
     panelBody.className ='panel-body';
@@ -225,5 +233,28 @@ function nextId(){
     localStorage.setItem('nextId', JSON.stringify(barmi));
     return barmi;
 }
+
+function colourPicker(num){
+    switch(num){
+        case 0:
+            return 'tile-blue';
+            break;
+        case 1:
+            return 'tile-green';
+            break;
+        case 2:
+            return 'tile-red';
+            break;
+        case 3:
+            return 'tile-lime';
+            break;
+        case 4:
+            return 'tile-purple';
+            break;
+        case 5:
+            return 'tile-pink';
+            break;
+    };
+};
 
 displayBoards();
