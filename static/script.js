@@ -117,7 +117,8 @@ function createTitle(buttonType){
     inputField.type = 'text';
     inputField.className = 'form-control';
     inputField.id = 'title';
-    inputField.setAttribute('onkeydown', "if (event.keyCode == 13) document.getElementById('save-button').click()");
+    inputField.setAttribute('onkeydown', "if (event.keyCode == 13) {document.getElementById('save-button').click();}\
+                            else if (event.keyCode == 27) {document.getElementById('remove-button').click();}");
 
     var inputDiv = document.createElement('div');
     inputDiv.className = 'input-group';
