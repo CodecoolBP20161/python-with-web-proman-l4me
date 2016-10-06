@@ -94,7 +94,7 @@ function createTitle(buttonType){
         var appendTo = document.getElementById('card-list');
     } else {
         var inputFrame = document.createElement('div');
-        inputFrame.className = 'col-sm-3';
+        inputFrame.className = 'col-xs-12 col-sm-6 col-md-4 col-lg-3 col-xl-2';
         inputFrame.id = buttonType;
         inputFrame.appendChild(inputPanel);
         var appendTo = document.getElementById('boards_div');
@@ -127,7 +127,7 @@ function newButton(buttonType){
     } else {
         var plusFrame = document.createElement('div');
         plusFrame.id = buttonType;
-        plusFrame.className = 'col-sm-3';
+        plusFrame.className = 'col-xs-12 col-sm-6 col-md-4 col-lg-3 col-xl-2';
         plusFrame.appendChild(plusPanel);
         var appendTo = document.getElementById('boards_div');
     };
@@ -142,7 +142,7 @@ function displayBoards(){
                 var colDiv = document.createElement('div');
                 var currentBoard = getBoards()[i].id;
                 colDiv.id = currentBoard;
-                colDiv.className = 'col-sm-3';
+                colDiv.className = 'col-xs-12 col-sm-6 col-md-4 col-lg-3 col-xl-2';
                 colDiv.setAttribute('onclick', 'displayCards("' + currentBoard + '")');
                 var panelDiv = document.createElement('div');
                 panelDiv.className = 'panel panel-default';
@@ -161,7 +161,7 @@ function displayBoards(){
 function displayCards(boardID){
     document.getElementById("boards_div").innerHTML = "";
     var colDiv = document.createElement('div');
-    colDiv.className = 'col-sm-3';
+    colDiv.className = 'col-xs-12 col-sm-6 col-md-4 col-lg-3 col-xl-2';
     var panelDiv = document.createElement('div');
     panelDiv.className = 'panel panel-default';
     var panelHead = document.createElement('div');
