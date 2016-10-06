@@ -244,6 +244,7 @@ function displayCards(boardID){
 
     var backBtn = document.createElement('span');
     backBtn.className = 'glyphicon glyphicon-chevron-left';
+    backBtn.id = 'back-button';
     backBtn.setAttribute('onclick', 'displayBoards()');
     panelHead.appendChild(backBtn);
     panelHead.innerHTML += board.title;
@@ -274,6 +275,7 @@ function displayCards(boardID){
     panelDiv.appendChild(panelBody);
     colDiv.appendChild(panelDiv);
     document.getElementById("boards_div").appendChild(colDiv);
+    document.body.setAttribute('onkeydown', "if (event.keyCode == 8) document.getElementById('back-button').click()")
     newButton(boardID);
 };
 

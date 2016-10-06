@@ -1,3 +1,16 @@
+body{
+  height: 100%;
+  margin:0px;
+  background-image:url("rainbow.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+::-webkit-scrollbar {
+display: none;
+}
+
 .row {
   display: -webkit-box;
   display: -webkit-flex;
