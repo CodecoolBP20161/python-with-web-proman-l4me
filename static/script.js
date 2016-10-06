@@ -64,6 +64,19 @@ function saveCard(boardID) {
     };
 };
 
+function deleteCard(boardID, cardID) {
+    var cards=JSON.parse(localStorage.getItem('cards'));
+    var boardCards = cards[parseInt(boardID)];
+    for( var i=0; i < boardCards.length; i++){
+        if(boardCards[i].id === parseInt(cardID)){
+            console.log(boardCards[i]);
+            cards[parseInt(boardID)].splice(i, 1);
+        };
+    };
+    localStorage.setItem('cards', JSON.stringify(cards));
+    displayCards(boardID);
+}
+
 function getCardsByBoard(boardID) {
     var allCards = localStorage.getItem('cards');
     allCards = JSON.parse(allCards);
@@ -82,6 +95,7 @@ function createTitle(buttonType){
     var removeButton = document.createElement('button');
     removeButton.type = 'button';
     removeButton.className = 'btn btn-secondary';
+    removeButton.id = 'remove-button';
     removeButton.setAttribute('onclick', 'newButton("' + buttonType + '")');
 
     var saveButton = document.createElement('button');
@@ -137,7 +151,6 @@ function createTitle(buttonType){
 function checkAvailable() {
    var button = document.getElementById('save-button');
        if (document.getElementById('title').value !== ''){
-           console.log(document.getElementById('title').value);
            button.disabled = false;
        } else {
            button.disabled = true;
@@ -248,6 +261,10 @@ function displayCards(boardID){
             var listItem = document.createElement('li');
             listItem.className = 'list-group-item';
             listItem.innerHTML = allCards[i].title;
+            var remove = document.createElement('span');
+            remove.className = 'right-icon glyphicon glyphicon-remove';
+            remove.setAttribute('onclick', 'deleteCard("' + boardID + '", "' + allCards[i].id + '")');
+            listItem.appendChild(remove);
             listFrame.appendChild(listItem);
         };
     };
