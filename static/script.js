@@ -28,6 +28,14 @@ function getBoards() {
     };
 };
 
+function getBoard(boardID) {
+    for(var item in getBoards()){
+        if(getBoards()[item]['id'] === parseInt(boardID)){
+            return getBoards()[item];
+        };
+    };
+};
+
 function saveCard(boardID) {
     if (document.getElementById('title').value !== "") {
         var newCard = {title: document.getElementById('title').value, id: nextId()};
@@ -139,16 +147,20 @@ function displayBoards(){
     if (getBoards()){
         for(var i=0; i < getBoards().length; i++){
             if(document.getElementById(getBoards()[i].id) === null){
-                var colDiv = document.createElement('div');
                 var currentBoard = getBoards()[i].id;
+
+                var colDiv = document.createElement('div');
                 colDiv.id = currentBoard;
                 colDiv.className = 'col-xs-12 col-sm-6 col-md-4 col-lg-3 col-xl-2';
                 colDiv.setAttribute('onclick', 'displayCards("' + currentBoard + '")');
+
                 var panelDiv = document.createElement('div');
                 panelDiv.className = 'panel panel-default';
+
                 var panelHead = document.createElement('div');
                 panelHead.className = 'panel-heading';
                 panelHead.innerHTML = getBoards()[i].title;
+
                 panelDiv.appendChild(panelHead);
                 colDiv.appendChild(panelDiv);
                 document.getElementById("boards_div").insertBefore(colDiv, document.getElementById("boards_div").firstChild);
@@ -162,24 +174,26 @@ function displayCards(boardID){
     document.getElementById("boards_div").innerHTML = "";
     var colDiv = document.createElement('div');
     colDiv.className = 'col-xs-12 col-sm-6 col-md-4 col-lg-3 col-xl-2';
+
     var panelDiv = document.createElement('div');
     panelDiv.className = 'panel panel-default';
+
     var panelHead = document.createElement('div');
     panelHead.className = 'panel-heading';
-    for(var item in getBoards()){
-        if(getBoards()[item]['id'] === parseInt(boardID)){
-            var backBtn = document.createElement('span');
-            backBtn.className = 'glyphicon glyphicon-chevron-left';
-            backBtn.setAttribute('onclick', 'displayBoards()');
-            panelHead.appendChild(backBtn);
-            panelHead.innerHTML += getBoards()[item].title;
-        };
-    };
+
+    var backBtn = document.createElement('span');
+    backBtn.className = 'glyphicon glyphicon-chevron-left';
+    backBtn.setAttribute('onclick', 'displayBoards()');
+    panelHead.appendChild(backBtn);
+    panelHead.innerHTML += getBoard(boardID).title;
+
     var panelBody = document.createElement('div');
     panelBody.className ='panel-body';
     panelBody.id = 'card-list'
+
     var listFrame = document.createElement('ul');
     listFrame.className = 'list-group';
+
     var allCards = getCardsByBoard(boardID);
     if (allCards) {
         for(var i=allCards.length-1; i >= 0; i--) {
@@ -189,6 +203,7 @@ function displayCards(boardID){
             listFrame.appendChild(listItem);
         };
     };
+
     panelBody.appendChild(listFrame);
     panelDiv.appendChild(panelHead);
     panelDiv.appendChild(panelBody);
