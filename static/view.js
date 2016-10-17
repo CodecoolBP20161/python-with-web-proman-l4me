@@ -1,3 +1,112 @@
+function displayBoards(){
+    //reset content
+    document.getElementById("boards_div").innerHTML = "";
+
+    if (getBoards()){
+        for(var i in getBoards()){
+            if(document.getElementById(getBoards()[i].id) === null){
+                //load board
+                var currentBoard = getBoards()[i].id;
+
+                //board tile
+                var colDiv = document.createElement('div');
+                colDiv.id = currentBoard;
+                colDiv.className = 'col-xs-12 col-sm-6 col-md-4 col-lg-3 col-xl-2';
+
+                //board panel
+                var panelDiv = document.createElement('div');
+                panelDiv.className =  'panel panel-default ';
+
+                //delete button
+                var remove = document.createElement('span');
+                remove.className = 'right-icon glyphicon glyphicon-remove';
+                remove.setAttribute('onclick', 'deleteBoard("' + currentBoard + '")');
+
+                //edit button
+                var edit = document.createElement('span');
+                edit.className = 'right-icon glyphicon glyphicon-pencil';
+                edit.setAttribute('onclick', 'displayCards("' + currentBoard + '")');
+
+                //board content
+                var panelHead = document.createElement('div');
+                panelHead.className = colourPicker(i % 6) + ' panel-heading';
+                panelHead.innerHTML = getBoards()[i].title;
+
+                //update html
+                panelHead.appendChild(remove);
+                panelHead.appendChild(edit);
+                panelDiv.appendChild(panelHead);
+                colDiv.appendChild(panelDiv);
+                document.getElementById("boards_div").insertBefore(colDiv, document.getElementById("boards_div").firstChild);
+            };
+        };
+    };
+    newButton("boards");
+};
+
+function displayCards(boardID){
+    //reset content
+    document.getElementById("boards_div").innerHTML = "";
+
+    //board tile
+    var colDiv = document.createElement('div');
+    colDiv.className = 'col-xs-12 col-sm-6 col-md-4 col-lg-3 col-xl-2';
+
+    //board panel
+    var panelDiv = document.createElement('div');
+    panelDiv.className = 'panel panel-default';
+
+    //board content
+    var panelHead = document.createElement('div');
+    panelHead.className = colourPicker(getBoard(boardID).colour) + ' panel-heading';
+
+    //back button
+    var backBtn = document.createElement('span');
+    backBtn.className = 'glyphicon glyphicon-chevron-left';
+    backBtn.id = 'back-button';
+    backBtn.setAttribute('onclick', 'displayBoards()');
+
+    //cards container
+    var panelBody = document.createElement('div');
+    panelBody.className ='panel-body';
+    panelBody.id = 'card-list'
+
+    //cards list
+    var listFrame = document.createElement('ul');
+    listFrame.className = 'list-group';
+    var allCards = getCardsByBoard(boardID);
+    if (allCards) {
+        for(var i in allCards) {
+            //cards content
+            var listItem = document.createElement('li');
+            listItem.className = 'list-group-item';
+            listItem.innerHTML = allCards[i].title;
+
+            //delete button
+            var remove = document.createElement('span');
+            remove.className = 'right-icon glyphicon glyphicon-remove';
+            remove.setAttribute('onclick', 'deleteCard("' + boardID + '", "' + allCards[i].id + '")');
+
+            //insert card to list
+            listItem.appendChild(remove);
+            listFrame.insertBefore(listItem, listFrame.firstChild);
+        };
+    };
+
+    //update html
+    panelHead.appendChild(backBtn);
+    panelHead.innerHTML += getBoard(boardID).title;
+    panelBody.appendChild(listFrame);
+    panelDiv.appendChild(panelHead);
+    panelDiv.appendChild(panelBody);
+    colDiv.appendChild(panelDiv);
+    document.getElementById("boards_div").appendChild(colDiv);
+    document.body.setAttribute('onkeydown', "if (event.keyCode == 8 &&\
+                               document.getElementById('title') !== document.activeElement)\
+                               document.getElementById('back-button').click()");
+    newButton(boardID);
+};
+
 function createTitle(buttonType){
     //replace new button
     var removeable = document.getElementById(buttonType);
