@@ -1,7 +1,7 @@
 function saveBoard() {
     if (document.getElementById('title').value !== "") {
         // define new board
-        var newBoard = {title: document.getElementById('title').value, id: nextId()};
+        var newBoard = new Board(nextId(), document.getElementById('title').value);
 
         //update boards list
         var boards = getBoards();
@@ -37,6 +37,7 @@ function deleteBoard(boardID) {
             allBoards.splice(i, 1);
         };
     };
+    console.log(allBoards);
 
     //save changes
     localStorage.setItem('cards', JSON.stringify(allCards))
@@ -58,10 +59,15 @@ function getBoard(boardID) {
 function getBoards() {
     //load boards list
     var boards = localStorage.getItem('boards');
-    if (boards === null){
+    if (boards === null || JSON.parse(boards.length) === 0){
         return false;
     } else {
-        boards = JSON.parse(boards);
+        boards = JSON.parse(boards)
+        var boardObjects = [];
+        for (var i in boards){
+            boardObjects.push(new Board(boards[i].id, boards[i].title));
+        };
+        boards = boardObjects;
         return boards;
     };
 };
@@ -90,9 +96,9 @@ function deleteCard(boardID, cardID) {
 
 function getCard(boardID, cardID) {
     //load selected card
-    var boardCards = JSON.parse(localStorage.getItem('cards'))[parseInt(boardID)];
-    for(var i in boardCards){
-        if(boardCards[i].id === parseInt(cardID)){
+    var cards = getCardsByBoard(boardID);
+    for (var i in cards){
+        if(cards[i].id === parseInt(cardID)){
             return i;
         };
     };
@@ -100,5 +106,10 @@ function getCard(boardID, cardID) {
 
 function getCardsByBoard(boardID) {
     //load cards list
-    return JSON.parse(localStorage.getItem('cards'))[boardID];
+    cards = JSON.parse(localStorage.getItem('cards'))[boardID];
+    cardObjects = [];
+    for (var i in cards){
+        cardObjects.push(new Card(cards[i].id, cards[i].title, boardID));
+    };
+    return cardObjects;
 };
