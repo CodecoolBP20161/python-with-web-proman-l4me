@@ -22,7 +22,7 @@ function LocalStorageState(){
             //save changes
             localStorage.setItem('boards', JSON.stringify(boards));
             localStorage.setItem('cards', JSON.stringify(cards));
-            displayBoards(new StorageState(new LocalStorageState()));
+            displayBoards(this.getBoards(), new StorageState(new LocalStorageState()));
         };
     };
 
@@ -42,7 +42,7 @@ function LocalStorageState(){
         //save changes
         localStorage.setItem('cards', JSON.stringify(allCards))
         localStorage.setItem('boards', JSON.stringify(allBoards));
-        displayBoards(new StorageState(new LocalStorageState()));
+        displayBoards(this.getBoards(), new StorageState(new LocalStorageState()));
     };
 
     this.getBoard = function(boardID) {
@@ -80,7 +80,7 @@ function LocalStorageState(){
 
             //save changes
             localStorage.setItem('cards', JSON.stringify(cards));
-            displayCards(new StorageState(new LocalStorageState()), boardID);
+            displayCards(this.getCardsByBoard(boardID), new StorageState(new LocalStorageState()), boardID);
         };
     };
 
@@ -91,7 +91,7 @@ function LocalStorageState(){
 
         //save changes
         localStorage.setItem('cards', JSON.stringify(cards));
-        displayCards(new StorageState(new LocalStorageState()), boardID);
+        displayCards(this.getCardsByBoard(boardID), new StorageState(new LocalStorageState()), boardID);
     };
 
     this.getCard = function(boardID, cardID) {
@@ -112,6 +112,36 @@ function LocalStorageState(){
             cardObjects.push(new Card(cards[i].id, cards[i].title, boardID));
         };
         return cardObjects;
+    };
+};
+
+function DatabaseState() {
+    this.saveBoard = function() {
+        $.getJSON('/saveBoard/?title=' + document.getElementById('title').value, function(data){
+            console.log(data);
+            displayBoards(new StorageState(new DatabaseState()));
+        });
+    };
+    this.deleteBoard = function(boardId) {
+        return true;
+    };
+    this.getBoard = function(boardId) {
+        return true;
+    };
+    this.getBoards = function () {
+        return true;
+    };
+    this.saveCard = function (boardId) {
+        return true;
+    };
+    this.deleteCard = function (boardId, cardId) {
+        return true;
+    };
+    this.getCard = function(boardId, cardId) {
+        return true;
+    };
+    this.getCardsByBoard = function (boardId) {
+        return true;
     };
 };
 
@@ -143,4 +173,4 @@ function StorageState() {
     this.getCardsByBoard = function (boardId) {
         return this.implementation().getCardsByBoard(boardId);
     };
-}
+};

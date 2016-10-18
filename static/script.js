@@ -24,4 +24,4 @@ function colourPicker(num){
     };
 };
 
-displayBoards(storage);
+displayBoards(storage.getBoards(), storage);
