@@ -1,12 +1,12 @@
-function displayBoards(){
+function displayBoards(storage){
     //reset content
     document.getElementById("boards_div").innerHTML = "";
 
-    if (getBoards()){
-        for(var i in getBoards()){
-            if(document.getElementById(getBoards()[i].id) === null){
+    if (storage.getBoards()){
+        for(var i in storage.getBoards()){
+            if(document.getElementById(storage.getBoards()[i].id) === null){
                 //load board
-                var currentBoard = getBoards()[i].id;
+                var currentBoard = storage.getBoards()[i].id;
 
                 //board tile
                 var colDiv = document.createElement('div');
@@ -20,17 +20,17 @@ function displayBoards(){
                 //delete button
                 var remove = document.createElement('span');
                 remove.className = 'right-icon glyphicon glyphicon-remove';
-                remove.setAttribute('onclick', 'deleteBoard("' + currentBoard + '")');
+                remove.setAttribute('onclick', 'storage.deleteBoard("' + currentBoard + '")');
 
                 //edit button
                 var edit = document.createElement('span');
                 edit.className = 'right-icon glyphicon glyphicon-pencil';
-                edit.setAttribute('onclick', 'displayCards("' + currentBoard + '")');
+                edit.setAttribute('onclick', 'displayCards(storage, "' + currentBoard + '")');
 
                 //board content
                 var panelHead = document.createElement('div');
                 panelHead.className = colourPicker(i % 6) + ' panel-heading';
-                panelHead.innerHTML = getBoards()[i].title;
+                panelHead.innerHTML = storage.getBoards()[i].title;
 
                 //update html
                 panelHead.appendChild(remove);
@@ -41,10 +41,11 @@ function displayBoards(){
             };
         };
     };
-    newButton("boards");
+    newButton("boards", storage);
 };
 
-function displayCards(boardID){
+function displayCards(storage, boardID){
+    var storage = new StorageState();
     //reset content
     document.getElementById("boards_div").innerHTML = "";
 
@@ -58,13 +59,13 @@ function displayCards(boardID){
 
     //board content
     var panelHead = document.createElement('div');
-    panelHead.className = colourPicker(getBoard(boardID).colour) + ' panel-heading';
+    panelHead.className = colourPicker(storage.getBoard(boardID).colour) + ' panel-heading';
 
     //back button
     var backBtn = document.createElement('span');
     backBtn.className = 'glyphicon glyphicon-chevron-left';
     backBtn.id = 'back-button';
-    backBtn.setAttribute('onclick', 'displayBoards()');
+    backBtn.setAttribute('onclick', 'displayBoards(storage)');
 
     //cards container
     var panelBody = document.createElement('div');
@@ -74,7 +75,7 @@ function displayCards(boardID){
     //cards list
     var listFrame = document.createElement('ul');
     listFrame.className = 'list-group';
-    var allCards = getCardsByBoard(boardID);
+    var allCards = storage.getCardsByBoard(boardID);
     if (allCards) {
         for(var i in allCards) {
             //cards content
@@ -85,7 +86,7 @@ function displayCards(boardID){
             //delete button
             var remove = document.createElement('span');
             remove.className = 'right-icon glyphicon glyphicon-remove';
-            remove.setAttribute('onclick', 'deleteCard("' + boardID + '", "' + allCards[i].id + '")');
+            remove.setAttribute('onclick', 'storage.deleteCard("' + boardID + '", "' + allCards[i].id + '")');
 
             //insert card to list
             listItem.appendChild(remove);
@@ -95,7 +96,7 @@ function displayCards(boardID){
 
     //update html
     panelHead.appendChild(backBtn);
-    panelHead.innerHTML += getBoard(boardID).title;
+    panelHead.innerHTML += storage.getBoard(boardID).title;
     panelBody.appendChild(listFrame);
     panelDiv.appendChild(panelHead);
     panelDiv.appendChild(panelBody);
@@ -104,10 +105,10 @@ function displayCards(boardID){
     document.body.setAttribute('onkeydown', "if (event.keyCode == 8 &&\
                                document.getElementById('title') !== document.activeElement)\
                                document.getElementById('back-button').click()");
-    newButton(boardID);
+    newButton(boardID, storage);
 };
 
-function createTitle(buttonType){
+function createTitle(storage, buttonType){
     //replace new button
     var removeable = document.getElementById(buttonType);
     if (removeable !== null){
@@ -123,7 +124,7 @@ function createTitle(buttonType){
     removeButton.type = 'button';
     removeButton.className = 'btn btn-secondary';
     removeButton.id = 'remove-button';
-    removeButton.setAttribute('onclick', 'newButton("' + buttonType + '")');
+    removeButton.setAttribute('onclick', 'newButton("' + buttonType + '", "storage")');
 
     //create button
     var saveButton = document.createElement('button');
@@ -131,9 +132,9 @@ function createTitle(buttonType){
     saveButton.className = 'btn btn-primary';
     saveButton.id = 'save-button';
     if (buttonType === 'boards'){
-        saveButton.setAttribute('onclick', 'saveBoard()');
+        saveButton.setAttribute('onclick', 'storage.saveBoard()');
     } else {
-        saveButton.setAttribute('onclick', 'saveCard("' + buttonType + '")');
+        saveButton.setAttribute('onclick', 'storage.saveCard("' + buttonType + '")');
     }
     saveButton.disabled = true;
     saveButton.innerHTML = 'Save';
@@ -192,7 +193,7 @@ function checkAvailable() {
     };
 };
 
-function newButton(buttonType){
+function newButton(buttonType, storage){
     //replace create form
     removeable = document.getElementById(buttonType);
     if (removeable !== null){
@@ -227,7 +228,7 @@ function newButton(buttonType){
         plusFrame.appendChild(plusPanel);
         var appendTo = document.getElementById('boards_div');
     };
-    plusFrame.setAttribute('onclick', 'createTitle("' + buttonType + '")');
+    plusFrame.setAttribute('onclick', 'createTitle("storage", "' + buttonType + '")');
     appendTo.appendChild(plusFrame);
     document.body.setAttribute('onkeyup', "if (event.keyCode == 73) document.getElementById('" + buttonType + "').click()");
 
