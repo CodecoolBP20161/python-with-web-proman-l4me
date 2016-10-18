@@ -1,3 +1,5 @@
+var storage = new StorageState();
+
 function nextId(){
     //implement auto-increment
     num = localStorage.getItem('nextId');
@@ -22,4 +24,4 @@ function colourPicker(num){
     };
 };
 
-displayBoards();
+displayBoards(storage);
