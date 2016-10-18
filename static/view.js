@@ -1,5 +1,4 @@
 function displayBoards(boards, storage){
-    console.log(boards)
     //reset content
     document.getElementById("boards_div").innerHTML = "";
 
@@ -59,7 +58,6 @@ function displayCards(cards, storage, boardID){
 
     //board content
     var panelHead = document.createElement('div');
-    console.log(storage);
     panelHead.className = colourPicker(storage.getBoard(boardID).colour) + ' panel-heading';
 
     //back button

@@ -13,7 +13,12 @@ def index():
 @app.route('/saveBoard/', methods=['GET'])
 def save_board():
     Board.create(title=request.args.get('title'))
-    return jsonify(Board.get(Board.title == request.args.get('title')).__dict__['_data'])
+    return 'Success'
+
+@app.route('/getBoards/', methods=['GET'])
+def get_boards():
+    boards = [i.__dict__['_data'] for i in Board.select()]
+    return jsonify(boards)
 
 
 if __name__ == "__main__":

@@ -116,19 +116,25 @@ function LocalStorageState(){
 };
 
 function DatabaseState() {
+    this.getBoards = function () {
+        return $.ajax({
+            async: false,
+            url: '/getBoards/',
+            dataType: 'json'
+        }).responseJSON;
+    };
     this.saveBoard = function() {
-        $.getJSON('/saveBoard/?title=' + document.getElementById('title').value, function(data){
-            console.log(data);
-            displayBoards(new StorageState(new DatabaseState()));
-        });
+        $.ajax({
+            async: false,
+            url: '/saveBoard/?title=' + document.getElementById('title').value,
+            dataType: 'json'
+        }).responseJSON;
+        displayBoards(this.getBoards(), new StorageState(new DatabaseState()));
     };
     this.deleteBoard = function(boardId) {
         return true;
     };
     this.getBoard = function(boardId) {
-        return true;
-    };
-    this.getBoards = function () {
         return true;
     };
     this.saveCard = function (boardId) {
@@ -147,7 +153,7 @@ function DatabaseState() {
 
 function StorageState() {
     this.implementation = function() {
-        return new LocalStorageState();
+        return new DatabaseState();
     };
     this.saveBoard = function() {
         return this.implementation().saveBoard();
