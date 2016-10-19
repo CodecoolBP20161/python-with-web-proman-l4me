@@ -24,4 +24,12 @@ function colourPicker(num){
     };
 };
 
-displayBoards(storage);
+function ajaxRequest(requestURL){
+    return $.ajax({
+        async: false,
+        url: requestURL,
+        dataType: 'json'
+    });
+}
+
+displayBoards(storage.getBoards(), storage);

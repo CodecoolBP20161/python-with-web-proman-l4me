@@ -22,7 +22,7 @@ function LocalStorageState(){
             //save changes
             localStorage.setItem('boards', JSON.stringify(boards));
             localStorage.setItem('cards', JSON.stringify(cards));
-            displayBoards(new StorageState(new LocalStorageState()));
+            displayBoards(this.getBoards(), new StorageState(new LocalStorageState()));
         };
     };
 
@@ -42,18 +42,7 @@ function LocalStorageState(){
         //save changes
         localStorage.setItem('cards', JSON.stringify(allCards))
         localStorage.setItem('boards', JSON.stringify(allBoards));
-        displayBoards(new StorageState(new LocalStorageState()));
-    };
-
-    this.getBoard = function(boardID) {
-        //load selected board
-        for(var i in this.getBoards()){
-            if(this.getBoards()[i].id === parseInt(boardID)){
-                board = this.getBoards()[i];
-                board['colour'] = i % 6;
-                return board;
-            };
-        };
+        displayBoards(this.getBoards(), new StorageState(new LocalStorageState()));
     };
 
     this.getBoards = function() {
@@ -80,7 +69,7 @@ function LocalStorageState(){
 
             //save changes
             localStorage.setItem('cards', JSON.stringify(cards));
-            displayCards(new StorageState(new LocalStorageState()), boardID);
+            displayCards(this.getCardsByBoard(boardID), new StorageState(new LocalStorageState()), boardID);
         };
     };
 
@@ -91,17 +80,7 @@ function LocalStorageState(){
 
         //save changes
         localStorage.setItem('cards', JSON.stringify(cards));
-        displayCards(new StorageState(new LocalStorageState()), boardID);
-    };
-
-    this.getCard = function(boardID, cardID) {
-        //load selected card
-        var cards = this.getCardsByBoard(boardID);
-        for (var i in cards){
-            if(cards[i].id === parseInt(cardID)){
-                return i;
-            };
-        };
+        displayCards(this.getCardsByBoard(boardID), new StorageState(new LocalStorageState()), boardID);
     };
 
     this.getCardsByBoard = function(boardID) {
@@ -115,32 +94,83 @@ function LocalStorageState(){
     };
 };
 
+function DatabaseState() {
+    this.saveBoard = function() {
+        ajaxRequest('/saveBoard/?title=' + document.getElementById('title').value);
+        displayBoards(this.getBoards(), new StorageState(new DatabaseState()));
+    };
+
+    this.deleteBoard = function(boardId) {
+        ajaxRequest('/deleteBoard/?boardId=' + boardId);
+        displayBoards(this.getBoards(), new StorageState(new DatabaseState()));
+    };
+
+    this.getBoards = function () {
+        return ajaxRequest('/getBoards/').responseJSON;
+    };
+
+    this.saveCard = function (boardId) {
+        ajaxRequest('/saveCard/?title=' + document.getElementById('title').value + '&boardId=' + parseInt(boardId));
+        displayCards(this.getCardsByBoard(boardId), new StorageState(new LocalStorageState()), boardId);
+    };
+
+    this.deleteCard = function (boardId, cardId) {
+        ajaxRequest('/deleteCard/?boardId=' + boardId + "&cardId=" + cardId);
+        displayCards(this.getCardsByBoard(boardId), new StorageState(new LocalStorageState()), boardId);
+    };
+
+    this.getCardsByBoard = function (boardId) {
+        return ajaxRequest('/getCardsByBoard/?boardId=' + boardId).responseJSON;
+    };
+};
+
 function StorageState() {
     this.implementation = function() {
-        return new LocalStorageState();
+        return new DatabaseState();
     };
+
     this.saveBoard = function() {
         return this.implementation().saveBoard();
     };
+
     this.deleteBoard = function(boardId) {
         return this.implementation().deleteBoard(boardId);
     };
-    this.getBoard = function(boardId) {
-        return this.implementation().getBoard(boardId);
+
+    this.getBoard = function(boardID) {
+        //load selected board
+        for(var i in this.getBoards()){
+            if(this.getBoards()[i].id === parseInt(boardID)){
+                board = this.getBoards()[i];
+                board['colour'] = i % 6;
+                return board;
+            };
+        };
     };
+
     this.getBoards = function () {
         return this.implementation().getBoards();
     };
+
     this.saveCard = function (boardId) {
         return this.implementation().saveCard(boardId);
     };
+
     this.deleteCard = function (boardId, cardId) {
         return this.implementation().deleteCard(boardId, cardId);
     };
-    this.getCard = function(boardId, cardId) {
-        return this.implementation().getCard(boardId, cardId);
+
+    this.getCard = function(boardID, cardID) {
+        //load selected card
+        var cards = this.getCardsByBoard(boardID);
+        for (var i in cards){
+            if(cards[i].id === parseInt(cardID)){
+                return i;
+            };
+        };
     };
+
     this.getCardsByBoard = function (boardId) {
         return this.implementation().getCardsByBoard(boardId);
     };
-}
+};

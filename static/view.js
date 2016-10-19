@@ -1,12 +1,12 @@
-function displayBoards(storage){
+function displayBoards(boards, storage){
     //reset content
     document.getElementById("boards_div").innerHTML = "";
 
-    if (storage.getBoards()){
-        for(var i in storage.getBoards()){
-            if(document.getElementById(storage.getBoards()[i].id) === null){
+    if (boards){
+        for(var i in boards){
+            if(document.getElementById(boards[i].id) === null){
                 //load board
-                var currentBoard = storage.getBoards()[i].id;
+                var currentBoard = boards[i].id;
 
                 //board tile
                 var colDiv = document.createElement('div');
@@ -25,12 +25,12 @@ function displayBoards(storage){
                 //edit button
                 var edit = document.createElement('span');
                 edit.className = 'right-icon glyphicon glyphicon-pencil';
-                edit.setAttribute('onclick', 'displayCards(storage, "' + currentBoard + '")');
+                edit.setAttribute('onclick', 'displayCards(storage.getCardsByBoard(' + currentBoard + '), storage, "' + currentBoard + '")');
 
                 //board content
                 var panelHead = document.createElement('div');
                 panelHead.className = colourPicker(i % 6) + ' panel-heading';
-                panelHead.innerHTML = storage.getBoards()[i].title;
+                panelHead.innerHTML = boards[i].title;
 
                 //update html
                 panelHead.appendChild(remove);
@@ -44,8 +44,7 @@ function displayBoards(storage){
     newButton("boards", storage);
 };
 
-function displayCards(storage, boardID){
-    var storage = new StorageState();
+function displayCards(cards, storage, boardID){
     //reset content
     document.getElementById("boards_div").innerHTML = "";
 
@@ -65,7 +64,7 @@ function displayCards(storage, boardID){
     var backBtn = document.createElement('span');
     backBtn.className = 'glyphicon glyphicon-chevron-left';
     backBtn.id = 'back-button';
-    backBtn.setAttribute('onclick', 'displayBoards(storage)');
+    backBtn.setAttribute('onclick', 'displayBoards(storage.getBoards(), storage)');
 
     //cards container
     var panelBody = document.createElement('div');
@@ -75,7 +74,7 @@ function displayCards(storage, boardID){
     //cards list
     var listFrame = document.createElement('ul');
     listFrame.className = 'list-group';
-    var allCards = storage.getCardsByBoard(boardID);
+    var allCards = cards;
     if (allCards) {
         for(var i in allCards) {
             //cards content
