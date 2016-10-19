@@ -18,8 +18,7 @@ def save_board():
 
 @app.route('/getBoards/', methods=['GET'])
 def get_boards():
-    boards = [i.__dict__['_data'] for i in Board.select()]
-    return jsonify(boards)
+    return jsonify([i.__dict__['_data'] for i in Board.select()])
 
 
 @app.route('/deleteBoard/', methods=['GET'])
@@ -37,8 +36,7 @@ def delete_card():
 
 @app.route('/saveCard/', methods=['GET'])
 def save_card():
-    board = Board.get(Board.id == request.args.get('boardId'))
-    Card.create(title=request.args.get('title'), board=board)
+    Card.create(title=request.args.get('title'), board=Board.get(Board.id == request.args.get('boardId')))
     return 'Success'
 
 

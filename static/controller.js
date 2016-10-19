@@ -83,16 +83,6 @@ function LocalStorageState(){
         displayCards(this.getCardsByBoard(boardID), new StorageState(new LocalStorageState()), boardID);
     };
 
-    this.getCard = function(boardID, cardID) {
-        //load selected card
-        var cards = this.getCardsByBoard(boardID);
-        for (var i in cards){
-            if(cards[i].id === parseInt(cardID)){
-                return i;
-            };
-        };
-    };
-
     this.getCardsByBoard = function(boardID) {
         //load cards list
         cards = JSON.parse(localStorage.getItem('cards'))[boardID];
@@ -105,57 +95,32 @@ function LocalStorageState(){
 };
 
 function DatabaseState() {
-    this.getBoards = function () {
-        return $.ajax({
-            async: false,
-            url: '/getBoards/',
-            dataType: 'json'
-        }).responseJSON;
-    };
     this.saveBoard = function() {
-        $.ajax({
-            async: false,
-            url: '/saveBoard/?title=' + document.getElementById('title').value,
-            dataType: 'json'
-        });
+        ajaxRequest('/saveBoard/?title=' + document.getElementById('title').value);
         displayBoards(this.getBoards(), new StorageState(new DatabaseState()));
     };
+
     this.deleteBoard = function(boardId) {
-        $.ajax({
-            async: false,
-            url: '/deleteBoard/?boardId=' + boardId,
-            dataType: 'json'
-        });
+        ajaxRequest('/deleteBoard/?boardId=' + boardId);
         displayBoards(this.getBoards(), new StorageState(new DatabaseState()));
+    };
+
+    this.getBoards = function () {
+        return ajaxRequest('/getBoards/').responseJSON;
     };
 
     this.saveCard = function (boardId) {
-        $.ajax({
-           async: false,
-           url: '/saveCard/?title=' + document.getElementById('title').value + '&boardId=' + parseInt(boardId),
-           dataType: 'json'
-       });
-       displayCards(this.getCardsByBoard(boardId), new StorageState(new LocalStorageState()), boardId);
-    };
-
-    this.deleteCard = function (boardId, cardId) {
-        $.ajax({
-            async: false,
-            url: '/deleteCard/?boardId=' + boardId + "&cardId=" + cardId,
-            dataType: 'json'
-        }).responseJSON;
+        ajaxRequest('/saveCard/?title=' + document.getElementById('title').value + '&boardId=' + parseInt(boardId));
         displayCards(this.getCardsByBoard(boardId), new StorageState(new LocalStorageState()), boardId);
     };
 
-    this.getCard = function(boardId, cardId) {
-        return true;
+    this.deleteCard = function (boardId, cardId) {
+        ajaxRequest('/deleteCard/?boardId=' + boardId + "&cardId=" + cardId);
+        displayCards(this.getCardsByBoard(boardId), new StorageState(new LocalStorageState()), boardId);
     };
+
     this.getCardsByBoard = function (boardId) {
-        return $.ajax({
-            async: false,
-            url: '/getCardsByBoard/?boardId=' + boardId,
-            dataType: 'json'
-        }).responseJSON;
+        return ajaxRequest('/getCardsByBoard/?boardId=' + boardId).responseJSON;
     };
 };
 
@@ -163,12 +128,15 @@ function StorageState() {
     this.implementation = function() {
         return new DatabaseState();
     };
+
     this.saveBoard = function() {
         return this.implementation().saveBoard();
     };
+
     this.deleteBoard = function(boardId) {
         return this.implementation().deleteBoard(boardId);
     };
+
     this.getBoard = function(boardID) {
         //load selected board
         for(var i in this.getBoards()){
@@ -179,18 +147,29 @@ function StorageState() {
             };
         };
     };
+
     this.getBoards = function () {
         return this.implementation().getBoards();
     };
+
     this.saveCard = function (boardId) {
         return this.implementation().saveCard(boardId);
     };
+
     this.deleteCard = function (boardId, cardId) {
         return this.implementation().deleteCard(boardId, cardId);
     };
-    this.getCard = function(boardId, cardId) {
-        return this.implementation().getCard(boardId, cardId);
+
+    this.getCard = function(boardID, cardID) {
+        //load selected card
+        var cards = this.getCardsByBoard(boardID);
+        for (var i in cards){
+            if(cards[i].id === parseInt(cardID)){
+                return i;
+            };
+        };
     };
+
     this.getCardsByBoard = function (boardId) {
         return this.implementation().getCardsByBoard(boardId);
     };
