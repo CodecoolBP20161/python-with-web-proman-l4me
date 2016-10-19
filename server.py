@@ -23,6 +23,7 @@ def get_boards():
 
 @app.route('/deleteBoard/', methods=['GET'])
 def delete_board():
+    Card.delete().where(Card.board == Board.get(Board.id == request.args.get('boardId'))).execute()
     Board.delete().where(Board.id == request.args.get('boardId')).execute()
     return 'Success'
 

@@ -126,7 +126,7 @@ function DatabaseState() {
 
 function StorageState() {
     this.implementation = function() {
-        return new DatabaseState();
+        return new LocalStorageStateer  ();
     };
 
     this.saveBoard = function() {
