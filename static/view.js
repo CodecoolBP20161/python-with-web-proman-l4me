@@ -25,7 +25,7 @@ function displayBoards(boards, storage){
                 //edit button
                 var edit = document.createElement('span');
                 edit.className = 'right-icon glyphicon glyphicon-pencil';
-                edit.setAttribute('onclick', 'displayCards(storage.getCardsByBoard(' + currentBoard.id + '), storage, "' + currentBoard + '")');
+                edit.setAttribute('onclick', 'displayCards(storage.getCardsByBoard(' + currentBoard + '), storage, "' + currentBoard + '")');
 
                 //board content
                 var panelHead = document.createElement('div');

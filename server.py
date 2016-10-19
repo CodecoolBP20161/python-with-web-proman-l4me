@@ -28,18 +28,18 @@ def delete_board():
     return 'Success'
 
 
-@app.route('/getBoard/', methods=['GET'])
-def get_board():
-    board = Board.get(Board.id == request.args.get('boardID')).__dict__['_data']
-    return jsonify(board)
-
-
 @app.route('/saveCard/', methods=['GET'])
 def save_card():
     board = Board.get(Board.id == request.args.get('boardId'))
     print(board.id)
     Card.create(title=request.args.get('title'), board=board)
     return 'Success'
+
+
+@app.route('/getCardsByBoard/', methods=['GET'])
+def get_cards_by_board():
+    board = Board.get(Board.id == request.args.get('boardId'))
+    return jsonify([i.__dict__['_data'] for i in Card.select().where(Card.board == board)])
 
 
 if __name__ == "__main__":

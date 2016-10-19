@@ -145,7 +145,11 @@ function DatabaseState() {
         return true;
     };
     this.getCardsByBoard = function (boardId) {
-        return true;
+        return $.ajax({
+            async: false,
+            url: '/getCardsByBoard/?boardId=' + boardId,
+            dataType: 'json'
+        }).responseJSON;
     };
 };
 
