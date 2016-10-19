@@ -139,8 +139,14 @@ function DatabaseState() {
     };
 
     this.deleteCard = function (boardId, cardId) {
-        return true;
+        $.ajax({
+            async: false,
+            url: '/deleteCard/?boardId=' + boardId + "&cardId=" + cardId,
+            dataType: 'json'
+        }).responseJSON;
+        displayCards(this.getCardsByBoard(boardId), new StorageState(new LocalStorageState()), boardId);
     };
+
     this.getCard = function(boardId, cardId) {
         return true;
     };

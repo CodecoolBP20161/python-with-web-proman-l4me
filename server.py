@@ -28,10 +28,16 @@ def delete_board():
     return 'Success'
 
 
+@app.route('/deleteCard/', methods=['GET'])
+def delete_card():
+    board = Board.get(Board.id == request.args.get('boardId'))
+    Card.delete().where((Card.board == board) & (Card.id == request.args.get('cardId'))).execute()
+    return 'Success'
+
+
 @app.route('/saveCard/', methods=['GET'])
 def save_card():
     board = Board.get(Board.id == request.args.get('boardId'))
-    print(board.id)
     Card.create(title=request.args.get('title'), board=board)
     return 'Success'
 
