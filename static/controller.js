@@ -45,17 +45,6 @@ function LocalStorageState(){
         displayBoards(this.getBoards(), new StorageState(new LocalStorageState()));
     };
 
-    this.getBoard = function(boardID) {
-        //load selected board
-        for(var i in this.getBoards()){
-            if(this.getBoards()[i].id === parseInt(boardID)){
-                board = this.getBoards()[i];
-                board['colour'] = i % 6;
-                return board;
-            };
-        };
-    };
-
     this.getBoards = function() {
         //load boards list
         var boards = localStorage.getItem('boards');
@@ -128,7 +117,7 @@ function DatabaseState() {
             async: false,
             url: '/saveBoard/?title=' + document.getElementById('title').value,
             dataType: 'json'
-        }).responseJSON;
+        });
         displayBoards(this.getBoards(), new StorageState(new DatabaseState()));
     };
     this.deleteBoard = function(boardId) {
@@ -136,13 +125,10 @@ function DatabaseState() {
             async: false,
             url: '/deleteBoard/?boardId=' + boardId,
             dataType: 'json'
-        }).responseJSON;
+        });
         displayBoards(this.getBoards(), new StorageState(new DatabaseState()));
     };
 
-    this.getBoard = function(boardId) {
-        return true;
-    };
     this.saveCard = function (boardId) {
         return true;
     };
@@ -167,8 +153,15 @@ function StorageState() {
     this.deleteBoard = function(boardId) {
         return this.implementation().deleteBoard(boardId);
     };
-    this.getBoard = function(boardId) {
-        return this.implementation().getBoard(boardId);
+    this.getBoard = function(boardID) {
+        //load selected board
+        for(var i in this.getBoards()){
+            if(this.getBoards()[i].id === parseInt(boardID)){
+                board = this.getBoards()[i];
+                board['colour'] = i % 6;
+                return board;
+            };
+        };
     };
     this.getBoards = function () {
         return this.implementation().getBoards();

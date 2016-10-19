@@ -28,6 +28,12 @@ def delete_board():
     return 'Success'
 
 
+@app.route('/getBoard/', methods=['GET'])
+def get_board():
+    board = Board.get(Board.id == request.args.get('boardID')).__dict__['_data']
+    return jsonify(board)
+
+
 if __name__ == "__main__":
     db.connect()
     app.run(debug=True, host='0.0.0.0')
