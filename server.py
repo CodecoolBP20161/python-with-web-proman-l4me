@@ -34,6 +34,14 @@ def get_board():
     return jsonify(board)
 
 
+@app.route('/saveCard/', methods=['GET'])
+def save_card():
+    board = Board.get(Board.id == request.args.get('boardId'))
+    print(board.id)
+    Card.create(title=request.args.get('title'), board=board)
+    return 'Success'
+
+
 if __name__ == "__main__":
     db.connect()
     app.run(debug=True, host='0.0.0.0')

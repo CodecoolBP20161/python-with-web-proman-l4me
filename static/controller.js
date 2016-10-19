@@ -130,8 +130,14 @@ function DatabaseState() {
     };
 
     this.saveCard = function (boardId) {
-        return true;
+        $.ajax({
+           async: false,
+           url: '/saveCard/?title=' + document.getElementById('title').value + '&boardId=' + parseInt(boardId),
+           dataType: 'json'
+       });
+       displayCards(this.getCardsByBoard(boardId), new StorageState(new LocalStorageState()), boardId);
     };
+
     this.deleteCard = function (boardId, cardId) {
         return true;
     };
