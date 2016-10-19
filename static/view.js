@@ -25,7 +25,7 @@ function displayBoards(boards, storage){
                 //edit button
                 var edit = document.createElement('span');
                 edit.className = 'right-icon glyphicon glyphicon-pencil';
-                edit.setAttribute('onclick', 'displayCards(storage.getCardsByBoard(' + currentBoard + '), storage, "' + currentBoard + '")');
+                edit.setAttribute('onclick', 'displayCards(storage.getCardsByBoard(' + currentBoard + '), storage, "' + currentBoard + '", "no-edit")');
 
                 //board content
                 var panelHead = document.createElement('div');
@@ -44,7 +44,7 @@ function displayBoards(boards, storage){
     newButton("boards", storage);
 };
 
-function displayCards(cards, storage, boardID){
+function displayCards(cards, storage, boardID, editID){
     //reset content
     document.getElementById("boards_div").innerHTML = "";
 
@@ -74,22 +74,31 @@ function displayCards(cards, storage, boardID){
     //cards list
     var listFrame = document.createElement('ul');
     listFrame.className = 'list-group';
-    var allCards = cards;
-    if (allCards) {
-        for(var i in allCards) {
-            //cards content
-            var listItem = document.createElement('li');
-            listItem.className = 'list-group-item';
-            listItem.innerHTML = allCards[i].title;
+    if (cards) {
+        for(var i in cards) {
+            if (cards[i].id === parseInt(editID)){
+                listFrame.insertBefore(editTitle(boardID, cards[i].id), listFrame.firstChild);
+            } else {
+                //cards content
+                var listItem = document.createElement('li');
+                listItem.className = 'list-group-item';
+                listItem.innerHTML = cards[i].title;
 
-            //delete button
-            var remove = document.createElement('span');
-            remove.className = 'right-icon glyphicon glyphicon-remove';
-            remove.setAttribute('onclick', 'storage.deleteCard("' + boardID + '", "' + allCards[i].id + '")');
+                //delete button
+                var remove = document.createElement('span');
+                remove.className = 'right-icon glyphicon glyphicon-remove';
+                remove.setAttribute('onclick', 'storage.deleteCard("' + boardID + '", "' + cards[i].id + '")');
 
-            //insert card to list
-            listItem.appendChild(remove);
-            listFrame.insertBefore(listItem, listFrame.firstChild);
+                //edit button
+                var edit = document.createElement('span');
+                edit.className = 'right-icon glyphicon glyphicon-pencil';
+                edit.setAttribute('onclick', 'displayCards(storage.getCardsByBoard(' + boardID + '), storage,  "' + boardID + '", "' + cards[i].id + '")');
+
+                //insert card to list
+                listItem.appendChild(remove);
+                listItem.appendChild(edit);
+                listFrame.insertBefore(listItem, listFrame.firstChild);
+            };
         };
     };
 
@@ -102,9 +111,14 @@ function displayCards(cards, storage, boardID){
     colDiv.appendChild(panelDiv);
     document.getElementById("boards_div").appendChild(colDiv);
     document.body.setAttribute('onkeydown', "if (event.keyCode == 8 &&\
-                               document.getElementById('title') !== document.activeElement)\
+                               document.getElementById('title') !== document.activeElement &&\
+                               document.getElementById('title'))\
                                document.getElementById('back-button').click()");
-    newButton(boardID, storage);
+    if (editID === 'no-edit'){
+        newButton(boardID, storage);
+    } else {
+        document.getElementById("edit-title").focus();
+    };
 };
 
 function createTitle(storage, buttonType){
@@ -229,6 +243,59 @@ function newButton(buttonType, storage){
     };
     plusFrame.setAttribute('onclick', 'createTitle("storage", "' + buttonType + '")');
     appendTo.appendChild(plusFrame);
-    document.body.setAttribute('onkeyup', "if (event.keyCode == 73) document.getElementById('" + buttonType + "').click()");
+    document.body.setAttribute('onkeyup', "if (event.keyCode == 73 && document.getElementById('" + buttonType + "')) document.getElementById('" + buttonType + "').click()");
 
+};
+
+function editTitle(boardID, cardID){
+    //load selected card
+    card = storage.getCard(boardID, cardID);
+    //remove icon
+    var remove = document.createElement('span');
+    remove.className = 'glyphicon glyphicon-remove';
+
+    //remove button
+    var removeButton = document.createElement('button');
+    removeButton.type = 'button';
+    removeButton.className = 'btn btn-secondary';
+    removeButton.id = 'remove-edit';
+    removeButton.setAttribute('onclick', 'displayCards(storage.getCardsByBoard(' + boardID + '), storage, "' + boardID + '", "no-edit")');
+
+    //create button
+    var saveButton = document.createElement('button');
+    saveButton.type = 'button';
+    saveButton.className = 'btn btn-primary';
+    saveButton.id = 'save-edit';
+    saveButton.setAttribute('onclick', 'storage.editCard("' + boardID + '", "' + cardID + '")');
+    saveButton.innerHTML = 'Save';
+
+    //button placing
+    var buttonSpan = document.createElement('span');
+    buttonSpan.className = 'input-group-btn';
+
+    //input for create
+    var inputField = document.createElement('input');
+    inputField.type = 'text';
+    inputField.className = 'form-control';
+    inputField.id = 'edit-title';
+    inputField.value = card.title;
+    inputField.setAttribute('onkeydown', "if (event.keyCode == 13) {document.getElementById('save-edit').click();}\
+                            else if (event.keyCode == 27) {document.getElementById('remove-edit').click();}");
+
+    //form placing
+    var inputDiv = document.createElement('div');
+    inputDiv.className = 'input-group';
+
+    //form panel
+    var inputPanel = document.createElement('div');
+    inputPanel.className = 'panel panel-default edit-title';
+
+    //update html
+    removeButton.appendChild(remove);
+    buttonSpan.appendChild(saveButton);
+    buttonSpan.appendChild(removeButton);
+    inputDiv.appendChild(inputField);
+    inputDiv.appendChild(buttonSpan);
+    inputPanel.appendChild(inputDiv);
+    return inputPanel;
 };

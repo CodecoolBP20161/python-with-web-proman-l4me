@@ -1,10 +1,10 @@
-function Board(boardId, title){
-    this.id = boardId;
+function Board(boardID, title){
+    this.id = boardID;
     this.title = title;
 };
 
-function Card(cardId, title, boardId){
-    this.id = cardId;
+function Card(cardID, title, boardID){
+    this.id = cardID;
     this.title = title;
-    this.board = boardId;
+    this.board = boardID;
 }
