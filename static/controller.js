@@ -132,8 +132,14 @@ function DatabaseState() {
         displayBoards(this.getBoards(), new StorageState(new DatabaseState()));
     };
     this.deleteBoard = function(boardId) {
-        return true;
+        $.ajax({
+            async: false,
+            url: '/deleteBoard/?boardId=' + boardId,
+            dataType: 'json'
+        }).responseJSON;
+        displayBoards(this.getBoards(), new StorageState(new DatabaseState()));
     };
+
     this.getBoard = function(boardId) {
         return true;
     };
