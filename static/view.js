@@ -20,7 +20,9 @@ function displayBoards(boards, storage){
                 //delete button
                 var remove = document.createElement('span');
                 remove.className = 'right-icon glyphicon glyphicon-remove';
-                remove.setAttribute('onclick', 'storage.deleteBoard("' + currentBoard + '")');
+                remove.setAttribute('data-toggle', 'modal');
+                remove.setAttribute('data-target', '#confModal');
+                remove.setAttribute('onclick', 'confModalFunc("' + currentBoard + '")');
 
                 //edit button
                 var edit = document.createElement('span');
@@ -87,7 +89,9 @@ function displayCards(cards, storage, boardID, editID){
                 //delete button
                 var remove = document.createElement('span');
                 remove.className = 'right-icon glyphicon glyphicon-remove';
-                remove.setAttribute('onclick', 'storage.deleteCard("' + boardID + '", "' + cards[i].id + '")');
+                remove.setAttribute('data-toggle', 'modal');
+                remove.setAttribute('data-target', '#confModal');
+                remove.setAttribute('onclick', 'confModalFunc("' + boardID + '", "' + cards[i].id + '")');
 
                 //edit button
                 var edit = document.createElement('span');
@@ -319,3 +323,52 @@ function editTitle(boardID, card){
     inputPanel.appendChild(inputDiv);
     return inputPanel;
 };
+
+function confModalFunc(boardID, cardID){
+    if (typeof cardID === "undefined"){
+        document.getElementById('confDelButton').setAttribute('onclick', 'storage.deleteBoard("' + boardID + '")');
+    } else {
+        document.getElementById('confDelButton').setAttribute('onclick', 'storage.deleteCard("' + boardID + '", "' + cardID + '")');
+    };
+};
+
+var confModal = document.createElement('div');
+confModal.id = 'confModal';
+confModal.className = 'modal fade';
+confModal.setAttribute('role', 'modal-dialog');
+
+var confModalInner = document.createElement('div');
+confModalInner.className = 'modal-dialog';
+
+var confModalContent = document.createElement('div');
+confModalContent.className = 'modal-content';
+
+var confModalHeader = document.createElement('div');
+confModalHeader.className = 'modal-header'
+var confCloseButton = document.createElement('button');
+confCloseButton.className = 'close';
+confCloseButton.setAttribute('data-dismiss', 'modal');
+confCloseButton.innerHTML = '&times;'
+
+var confModalBody = document.createElement('div');
+confModalBody.className = 'modal-body';
+confModalBody.innerHTML = 'Do you want to delete data?'
+
+var confModalFooter = document.createElement('div');
+confModalFooter.className = 'modal-footer';
+var confDelButton = document.createElement('button');
+confDelButton.type = 'button';
+confDelButton.id = 'confDelButton';
+confDelButton.className = 'btn btn-default';
+confDelButton.innerHTML = 'OK';
+confDelButton.setAttribute('data-dismiss', 'modal');
+
+confModalHeader.appendChild(confCloseButton);
+confModalFooter.appendChild(confDelButton);
+confModalContent.appendChild(confModalHeader);
+confModalContent.appendChild(confModalBody);
+confModalContent.appendChild(confModalFooter);
+confModalInner.appendChild(confModalContent);
+confModal.appendChild(confModalInner);
+console.log(confModal);
+document.body.appendChild(confModal);
