@@ -77,7 +77,7 @@ function displayCards(cards, storage, boardID, editID){
     if (cards) {
         for(var i in cards) {
             if (cards[i].id === parseInt(editID)){
-                listFrame.insertBefore(editTitle(boardID, cards[i].id), listFrame.firstChild);
+                listFrame.insertBefore(editTitle(boardID, cards[i]), listFrame.firstChild);
             } else {
                 //cards content
                 var listItem = document.createElement('li');
@@ -120,6 +120,59 @@ function displayCards(cards, storage, boardID, editID){
     };
 };
 
+function getRemoveButton(type, boardID){
+    var removeButton = document.createElement('button');
+    removeButton.type = 'button';
+    removeButton.className = 'btn btn-secondary';
+    if(type === 'save'){
+        removeButton.id = 'remove-button';
+        removeButton.setAttribute('onclick', 'newButton("' + boardID + '", "storage")');
+    } else {
+        removeButton.id = 'remove-edit';
+        removeButton.setAttribute('onclick', 'displayCards(storage.getCardsByBoard(' + boardID + '), storage, "' + boardID + '", "no-edit")');
+    }
+    return removeButton;
+}
+
+function getSaveButton(type, boardID, cardID){
+    var saveButton = document.createElement('button');
+    saveButton.type = 'button';
+    saveButton.className = 'btn btn-primary';
+    saveButton.innerHTML = 'Save';
+    if (type === 'save'){
+        saveButton.id = 'save-button';
+        if (boardID === 'boards'){
+            saveButton.setAttribute('onclick', 'storage.saveBoard()');
+        } else {
+            saveButton.setAttribute('onclick', 'storage.saveCard("' + boardID + '")');
+        };
+        saveButton.disabled = true;
+    } else {
+        saveButton.id = 'save-edit';
+        saveButton.setAttribute('onclick', 'storage.editCard("' + boardID + '", "' + cardID + '")');
+    };
+    return saveButton;
+};
+
+function getInputField(type, card){
+    var inputField = document.createElement('input');
+    inputField.type = 'text';
+    inputField.className = 'form-control';
+    if (type === 'save'){
+        inputField.id = 'title';
+        inputField.setAttribute('onkeydown', "if (event.keyCode == 13) {document.getElementById('save-button').click();}\
+                                else if (event.keyCode == 27) {document.getElementById('remove-button').click();}");
+        inputField.setAttribute('onkeyup', 'checkAvailable("title")');
+    } else {
+        inputField.id = 'edit-title';
+        inputField.value = card.title;
+        inputField.setAttribute('onkeydown', "if (event.keyCode == 13) {document.getElementById('save-edit').click();}\
+                                else if (event.keyCode == 27) {document.getElementById('remove-edit').click();}");
+        inputField.setAttribute('onkeyup', 'checkAvailable("edit-title")');
+    };
+    return inputField;
+};
+
 function createTitle(storage, buttonType){
     //replace new button
     var removeable = document.getElementById(buttonType);
@@ -132,36 +185,17 @@ function createTitle(storage, buttonType){
     remove.className = 'glyphicon glyphicon-remove';
 
     //remove button
-    var removeButton = document.createElement('button');
-    removeButton.type = 'button';
-    removeButton.className = 'btn btn-secondary';
-    removeButton.id = 'remove-button';
-    removeButton.setAttribute('onclick', 'newButton("' + buttonType + '", "storage")');
+    var removeButton = getRemoveButton('save', buttonType);
 
     //create button
-    var saveButton = document.createElement('button');
-    saveButton.type = 'button';
-    saveButton.className = 'btn btn-primary';
-    saveButton.id = 'save-button';
-    if (buttonType === 'boards'){
-        saveButton.setAttribute('onclick', 'storage.saveBoard()');
-    } else {
-        saveButton.setAttribute('onclick', 'storage.saveCard("' + buttonType + '")');
-    }
-    saveButton.disabled = true;
-    saveButton.innerHTML = 'Save';
+    var saveButton = getSaveButton('save', buttonType);
 
     //button placing
     var buttonSpan = document.createElement('span');
     buttonSpan.className = 'input-group-btn';
 
     //input for create
-    var inputField = document.createElement('input');
-    inputField.type = 'text';
-    inputField.className = 'form-control';
-    inputField.id = 'title';
-    inputField.setAttribute('onkeydown', "if (event.keyCode == 13) {document.getElementById('save-button').click();}\
-                            else if (event.keyCode == 27) {document.getElementById('remove-button').click();}");
+    var inputField = getInputField('save');
 
     //form placing
     var inputDiv = document.createElement('div');
@@ -190,7 +224,6 @@ function createTitle(storage, buttonType){
         var appendTo = document.getElementById('boards_div');
     };
     appendTo.appendChild(inputFrame);
-    inputField.setAttribute('onkeyup', 'checkAvailable("title")');
     document.getElementById("title").focus();
 
 };
@@ -251,41 +284,23 @@ function newButton(buttonType, storage){
 
 };
 
-function editTitle(boardID, cardID){
-    //load selected card
-    card = storage.getCard(boardID, cardID);
+function editTitle(boardID, card){
     //remove icon
     var remove = document.createElement('span');
     remove.className = 'glyphicon glyphicon-remove';
 
     //remove button
-    var removeButton = document.createElement('button');
-    removeButton.type = 'button';
-    removeButton.className = 'btn btn-secondary';
-    removeButton.id = 'remove-edit';
-    removeButton.setAttribute('onclick', 'displayCards(storage.getCardsByBoard(' + boardID + '), storage, "' + boardID + '", "no-edit")');
+    var removeButton = getRemoveButton('edit', boardID);
 
     //create button
-    var saveButton = document.createElement('button');
-    saveButton.type = 'button';
-    saveButton.className = 'btn btn-primary';
-    saveButton.id = 'save-edit';
-    saveButton.setAttribute('onclick', 'storage.editCard("' + boardID + '", "' + cardID + '")');
-    saveButton.innerHTML = 'Save';
+    var saveButton = getSaveButton('edit', boardID, card.id);
 
     //button placing
     var buttonSpan = document.createElement('span');
     buttonSpan.className = 'input-group-btn';
 
     //input for create
-    var inputField = document.createElement('input');
-    inputField.type = 'text';
-    inputField.className = 'form-control';
-    inputField.id = 'edit-title';
-    inputField.value = card.title;
-    inputField.setAttribute('onkeydown', "if (event.keyCode == 13) {document.getElementById('save-edit').click();}\
-                            else if (event.keyCode == 27) {document.getElementById('remove-edit').click();}");
-    inputField.setAttribute('onkeyup', 'checkAvailable("edit-title")');
+    var inputField = getInputField('edit', card);
 
     //form placing
     var inputDiv = document.createElement('div');
