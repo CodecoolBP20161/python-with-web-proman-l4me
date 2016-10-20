@@ -69,18 +69,32 @@ function LocalStorageState(){
 
             //save changes
             localStorage.setItem('cards', JSON.stringify(cards));
-            displayCards(this.getCardsByBoard(boardID), new StorageState(new LocalStorageState()), boardID);
+            displayCards(this.getCardsByBoard(boardID), new StorageState(new LocalStorageState()), boardID, 'no-edit');
         };
     };
 
     this.deleteCard = function(boardID, cardID) {
         //update cards list
         var cards=JSON.parse(localStorage.getItem('cards'));
-        cards[parseInt(boardID)].splice(this.getCard(boardID, cardID), 1);
+        cards[parseInt(boardID)].splice(this.getCard(boardID, cardID), 1).index;
 
         //save changes
         localStorage.setItem('cards', JSON.stringify(cards));
-        displayCards(this.getCardsByBoard(boardID), new StorageState(new LocalStorageState()), boardID);
+        displayCards(this.getCardsByBoard(boardID), new StorageState(new LocalStorageState()), boardID, 'no-edit');
+    };
+
+    this.editCard = function(boardID, cardID) {
+        //update cards list
+        var cards=JSON.parse(localStorage.getItem('cards'));
+        for (var i in cards[boardID]){
+            if (cards[boardID][i].id === parseInt(cardID)){
+                cards[boardID][i].title = document.getElementById('edit-title').value;
+            }
+        }
+
+        //save changes
+        localStorage.setItem('cards', JSON.stringify(cards));
+        displayCards(this.getCardsByBoard(boardID), new StorageState(new LocalStorageState()), boardID, 'no-edit');
     };
 
     this.getCard = function(boardID, cardID) {
@@ -88,7 +102,8 @@ function LocalStorageState(){
         var cards = this.getCardsByBoard(boardID);
         for (var i in cards){
             if(cards[i].id === parseInt(cardID)){
-                return i;
+                cards[i].index = i;
+                return cards[i];
             };
         };
     };
@@ -145,7 +160,7 @@ function DatabaseState() {
 
 function StorageState() {
     this.implementation = function() {
-        return new DatabaseState();
+        return new LocalStorageState();
     };
 
     this.saveBoard = function() {
