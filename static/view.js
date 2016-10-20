@@ -111,8 +111,7 @@ function displayCards(cards, storage, boardID, editID){
     colDiv.appendChild(panelDiv);
     document.getElementById("boards_div").appendChild(colDiv);
     document.body.setAttribute('onkeydown', "if (event.keyCode == 8 &&\
-                               document.getElementById('title') !== document.activeElement &&\
-                               document.getElementById('title'))\
+                               document.getElementById('plus'))\
                                document.getElementById('back-button').click()");
     if (editID === 'no-edit'){
         newButton(boardID, storage);
@@ -191,15 +190,19 @@ function createTitle(storage, buttonType){
         var appendTo = document.getElementById('boards_div');
     };
     appendTo.appendChild(inputFrame);
-    inputField.setAttribute('onkeyup', 'checkAvailable()');
+    inputField.setAttribute('onkeyup', 'checkAvailable("title")');
     document.getElementById("title").focus();
 
 };
 
-function checkAvailable() {
+function checkAvailable(input) {
     //input validator
-    var button = document.getElementById('save-button');
-    if (document.getElementById('title').value !== ''){
+    if (input === "title") {
+        var button = document.getElementById('save-button');
+    } else {
+        var button = document.getElementById('save-edit');
+    };
+    if (document.getElementById(input).value !== ''){
         button.disabled = false;
     } else {
         button.disabled = true;
@@ -221,6 +224,7 @@ function newButton(buttonType, storage){
     var plusButton = document.createElement('button');
     plusButton.type = 'button';
     plusButton.className = 'btn btn-info btn-primary btn-block';
+    plusButton.id = 'plus';
 
     //new button placing
     var plusPanel = document.createElement('div');
@@ -281,6 +285,7 @@ function editTitle(boardID, cardID){
     inputField.value = card.title;
     inputField.setAttribute('onkeydown', "if (event.keyCode == 13) {document.getElementById('save-edit').click();}\
                             else if (event.keyCode == 27) {document.getElementById('remove-edit').click();}");
+    inputField.setAttribute('onkeyup', 'checkAvailable("edit-title")');
 
     //form placing
     var inputDiv = document.createElement('div');
