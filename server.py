@@ -23,26 +23,37 @@ def get_boards():
 
 @app.route('/deleteBoard/', methods=['GET'])
 def delete_board():
-    Board.delete().where(Board.id == request.args.get('boardId')).execute()
+    Card.delete().where(Card.board == Board.get(Board.id == request.args.get('boardID'))).execute()
+    Board.delete().where(Board.id == request.args.get('boardID')).execute()
     return 'Success'
 
 
 @app.route('/deleteCard/', methods=['GET'])
 def delete_card():
-    board = Board.get(Board.id == request.args.get('boardId'))
-    Card.delete().where((Card.board == board) & (Card.id == request.args.get('cardId'))).execute()
+    Card.delete().where(Card.id == request.args.get('cardID')).execute()
+    return 'Success'
+
+
+@app.route('/editCard/', methods=['GET'])
+def edit_card():
+    Card.update(title=request.args.get('title')).where(Card.id == request.args.get('cardID')).execute()
     return 'Success'
 
 
 @app.route('/saveCard/', methods=['GET'])
 def save_card():
-    Card.create(title=request.args.get('title'), board=Board.get(Board.id == request.args.get('boardId')))
+    Card.create(title=request.args.get('title'), board=Board.get(Board.id == request.args.get('boardID')))
     return 'Success'
+
+
+@app.route('/getCard/', methods=['GET'])
+def get_card():
+    return jsonify(Card.get(Card.id == request.args.get('cardID')).__dict__['_data'])
 
 
 @app.route('/getCardsByBoard/', methods=['GET'])
 def get_cards_by_board():
-    board = Board.get(Board.id == request.args.get('boardId'))
+    board = Board.get(Board.id == request.args.get('boardID'))
     return jsonify([i.__dict__['_data'] for i in Card.select().where(Card.board == board)])
 
 
