@@ -165,7 +165,7 @@ function checkAvailable(input) {
     } else {
         var button = document.getElementById('save-edit');
     };
-    if (document.getElementById(input).value !== ''){
+    if (document.getElementById(input).value.replace( /\s/g, "") !== ''){
         button.disabled = false;
     } else {
         button.disabled = true;
