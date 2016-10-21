@@ -5,6 +5,8 @@
         <link rel="shortcut icon" href="{{url_for('static', filename='codecool_icon.png')}}">
         <link rel="stylesheet" href="https://bootswatch.com/cerulean/bootstrap.min.css">
         <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
         <title>L4Me ProMan</title>
     </head>
     <body>
@@ -13,9 +15,22 @@
             <div class="row" align="left" id="boards_div">
             </div>
         </div>
-        <script src="{{ url_for('static', filename='board.js')}}"></script>
-        <script src="{{ url_for('static', filename='card.js')}}"></script>
-        <script src="{{ url_for('static', filename='buttons.js')}}"></script>
+        <div id="confModal" class="modal fade" role="modal-dialog" style="display: none;">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button class="close" id="close-modal" data-dismiss="modal">×</button>
+                    </div>
+                    <div class="modal-body">Do you want to delete data?</div>
+                    <div class="modal-footer">
+                        <button type="button" id="confDelButton" class="btn btn-default" data-dismiss="modal">OK</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="{{ url_for('static', filename='models.js')}}"></script>
+        <script src="{{ url_for('static', filename='controller.js')}}"></script>
+        <script src="{{ url_for('static', filename='view.js')}}"></script>
         <script src="{{ url_for('static', filename='script.js')}}"></script>
     </body>
 </html>
