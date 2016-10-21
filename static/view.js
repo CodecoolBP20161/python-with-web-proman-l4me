@@ -114,14 +114,70 @@ function displayCards(cards, storage, boardID, editID){
     panelDiv.appendChild(panelBody);
     colDiv.appendChild(panelDiv);
     document.getElementById("boards_div").appendChild(colDiv);
-    document.body.setAttribute('onkeydown', "if (event.keyCode == 8 &&\
-                               document.getElementById('plus'))\
-                               document.getElementById('back-button').click()");
+    document.body.setAttribute('onkeydown', "bSpaceHotkey()");
     if (editID === 'no-edit'){
         newButton(boardID, storage);
     } else {
         document.getElementById("edit-title").focus();
     };
+};
+
+function newButton(buttonType, storage){
+    //replace create form
+    replace(buttonType);
+    //new button icon
+    var plus = document.createElement('span');
+    plus.className = 'glyphicon glyphicon-plus';
+    //new button
+    var plusButton = document.createElement('button');
+    plusButton.type = 'button';
+    plusButton.className = 'btn btn-info btn-primary btn-block';
+    plusButton.id = 'plus';
+    //new button placing
+    var plusPanel = document.createElement('div');
+    plusPanel.className = 'panel panel-default';
+
+    //update html
+    plusButton.appendChild(plus);
+    plusPanel.appendChild(plusButton);
+    if (buttonType !== 'boards'){
+        var plusFrame = plusPanel;
+        plusFrame.id = buttonType;
+        var appendTo = document.getElementById('card-list');
+
+    } else {
+        var plusFrame = document.createElement('div');
+        plusFrame.id = buttonType;
+        plusFrame.className = 'col-xs-12 col-sm-6 col-md-4 col-lg-3 col-xl-2';
+        plusFrame.appendChild(plusPanel);
+        var appendTo = document.getElementById('boards_div');
+    };
+    plusFrame.setAttribute('onclick', 'createTitle("storage", "' + buttonType + '")');
+    appendTo.appendChild(plusFrame);
+    document.body.setAttribute('onkeyup', 'iHotkey("' + buttonType + '")');
+
+};
+
+function checkAvailable(input) {
+    //input validator
+    if (input === "title") {
+        var button = document.getElementById('save-button');
+    } else {
+        var button = document.getElementById('save-edit');
+    };
+    if (document.getElementById(input).value !== ''){
+        button.disabled = false;
+    } else {
+        button.disabled = true;
+    };
+};
+
+function replace(boardID){
+    //replace new button
+    var removeable = document.getElementById(boardID);
+    if (removeable !== null){
+        removeable.outerHTML = '';
+    }
 };
 
 function getRemoveButton(type, boardID){
@@ -179,32 +235,22 @@ function getInputField(type, card){
 
 function createTitle(storage, buttonType){
     //replace new button
-    var removeable = document.getElementById(buttonType);
-    if (removeable !== null){
-        removeable.outerHTML = '';
-    }
-
+    replace(buttonType);
     //remove icon
     var remove = document.createElement('span');
     remove.className = 'glyphicon glyphicon-remove';
-
     //remove button
     var removeButton = getRemoveButton('save', buttonType);
-
     //create button
     var saveButton = getSaveButton('save', buttonType);
-
     //button placing
     var buttonSpan = document.createElement('span');
     buttonSpan.className = 'input-group-btn';
-
     //input for create
     var inputField = getInputField('save');
-
     //form placing
     var inputDiv = document.createElement('div');
     inputDiv.className = 'input-group';
-
     //form panel
     var inputPanel = document.createElement('div');
     inputPanel.className = 'panel panel-default';
@@ -232,84 +278,22 @@ function createTitle(storage, buttonType){
 
 };
 
-function checkAvailable(input) {
-    //input validator
-    if (input === "title") {
-        var button = document.getElementById('save-button');
-    } else {
-        var button = document.getElementById('save-edit');
-    };
-    if (document.getElementById(input).value !== ''){
-        button.disabled = false;
-    } else {
-        button.disabled = true;
-    };
-};
-
-function newButton(buttonType, storage){
-    //replace create form
-    removeable = document.getElementById(buttonType);
-    if (removeable !== null){
-        removeable.outerHTML = '';
-    }
-
-    //new button icon
-    var plus = document.createElement('span');
-    plus.className = 'glyphicon glyphicon-plus';
-
-    //new button
-    var plusButton = document.createElement('button');
-    plusButton.type = 'button';
-    plusButton.className = 'btn btn-info btn-primary btn-block';
-    plusButton.id = 'plus';
-
-    //new button placing
-    var plusPanel = document.createElement('div');
-    plusPanel.className = 'panel panel-default';
-
-    //update html
-    plusButton.appendChild(plus);
-    plusPanel.appendChild(plusButton);
-    if (buttonType !== 'boards'){
-        var plusFrame = plusPanel;
-        plusFrame.id = buttonType;
-        var appendTo = document.getElementById('card-list');
-
-    } else {
-        var plusFrame = document.createElement('div');
-        plusFrame.id = buttonType;
-        plusFrame.className = 'col-xs-12 col-sm-6 col-md-4 col-lg-3 col-xl-2';
-        plusFrame.appendChild(plusPanel);
-        var appendTo = document.getElementById('boards_div');
-    };
-    plusFrame.setAttribute('onclick', 'createTitle("storage", "' + buttonType + '")');
-    appendTo.appendChild(plusFrame);
-    document.body.setAttribute('onkeyup', "if (event.keyCode == 73 && document.getElementById('" + buttonType + "')) document.getElementById('" + buttonType + "').click()");
-
-};
-
 function editTitle(boardID, card){
     //remove icon
     var remove = document.createElement('span');
     remove.className = 'glyphicon glyphicon-remove';
-
     //remove button
     var removeButton = getRemoveButton('edit', boardID);
-
     //create button
     var saveButton = getSaveButton('edit', boardID, card.id);
-
     //button placing
     var buttonSpan = document.createElement('span');
     buttonSpan.className = 'input-group-btn';
-
     //input for create
     var inputField = getInputField('edit', card);
-
     //form placing
     var inputDiv = document.createElement('div');
     inputDiv.className = 'input-group';
-
     //form panel
     var inputPanel = document.createElement('div');
     inputPanel.className = 'panel panel-default edit-title';
@@ -331,44 +315,3 @@ function confModalFunc(boardID, cardID){
         document.getElementById('confDelButton').setAttribute('onclick', 'storage.deleteCard("' + boardID + '", "' + cardID + '")');
     };
 };
-
-var confModal = document.createElement('div');
-confModal.id = 'confModal';
-confModal.className = 'modal fade';
-confModal.setAttribute('role', 'modal-dialog');
-
-var confModalInner = document.createElement('div');
-confModalInner.className = 'modal-dialog';
-
-var confModalContent = document.createElement('div');
-confModalContent.className = 'modal-content';
-
-var confModalHeader = document.createElement('div');
-confModalHeader.className = 'modal-header'
-var confCloseButton = document.createElement('button');
-confCloseButton.className = 'close';
-confCloseButton.setAttribute('data-dismiss', 'modal');
-confCloseButton.innerHTML = '&times;'
-
-var confModalBody = document.createElement('div');
-confModalBody.className = 'modal-body';
-confModalBody.innerHTML = 'Do you want to delete data?'
-
-var confModalFooter = document.createElement('div');
-confModalFooter.className = 'modal-footer';
-var confDelButton = document.createElement('button');
-confDelButton.type = 'button';
-confDelButton.id = 'confDelButton';
-confDelButton.className = 'btn btn-default';
-confDelButton.innerHTML = 'OK';
-confDelButton.setAttribute('data-dismiss', 'modal');
-
-confModalHeader.appendChild(confCloseButton);
-confModalFooter.appendChild(confDelButton);
-confModalContent.appendChild(confModalHeader);
-confModalContent.appendChild(confModalBody);
-confModalContent.appendChild(confModalFooter);
-confModalInner.appendChild(confModalContent);
-confModal.appendChild(confModalInner);
-console.log(confModal);
-document.body.appendChild(confModal);

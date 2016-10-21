@@ -10,7 +10,7 @@ function nextId(){
     };
     localStorage.setItem('nextId', JSON.stringify(num));
     return num;
-}
+};
 
 function colourPicker(num){
     //rotate tile colours
@@ -29,7 +29,23 @@ function ajaxRequest(requestURL){
         async: false,
         url: requestURL,
         dataType: 'json'
-    });
-}
+    });;
+};
+
+function bSpaceHotkey(){
+    if (event.keyCode == 8){
+        if (document.getElementById('confModal').className === 'modal fade' && document.getElementById('plus')){
+            document.getElementById('back-button').click();
+        } else if (document.getElementById('confModal').className === 'modal fade in'){
+            document.getElementById('close-modal').click();
+        };
+    };
+};
+
+function iHotkey(boardID){
+    if (event.keyCode == 73 && document.getElementById(boardID) && document.getElementById('confModal').className === 'modal fade'){
+        document.getElementById(boardID).click();
+    };
+};
 
 displayBoards(storage.getBoards(), storage);

@@ -15,6 +15,19 @@
             <div class="row" align="left" id="boards_div">
             </div>
         </div>
+        <div id="confModal" class="modal fade" role="modal-dialog" style="display: none;">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button class="close" id="close-modal" data-dismiss="modal">×</button>
+                    </div>
+                    <div class="modal-body">Do you want to delete data?</div>
+                    <div class="modal-footer">
+                        <button type="button" id="confDelButton" class="btn btn-default" data-dismiss="modal">OK</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <script src="{{ url_for('static', filename='models.js')}}"></script>
         <script src="{{ url_for('static', filename='controller.js')}}"></script>
         <script src="{{ url_for('static', filename='view.js')}}"></script>
