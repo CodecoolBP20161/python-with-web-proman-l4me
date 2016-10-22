@@ -7,28 +7,23 @@ function displayBoards(boards, storage){
             if(document.getElementById(boards[i].id) === null){
                 //load board
                 var currentBoard = boards[i].id;
-
                 //board tile
                 var colDiv = document.createElement('div');
                 colDiv.id = currentBoard;
                 colDiv.className = 'col-xs-12 col-sm-6 col-md-4 col-lg-3 col-xl-2';
-
                 //board panel
                 var panelDiv = document.createElement('div');
                 panelDiv.className =  'panel panel-default ';
-
                 //delete button
                 var remove = document.createElement('span');
                 remove.className = 'right-icon glyphicon glyphicon-remove';
                 remove.setAttribute('data-toggle', 'modal');
                 remove.setAttribute('data-target', '#confModal');
                 remove.setAttribute('onclick', 'confModalFunc("' + currentBoard + '")');
-
                 //edit button
                 var edit = document.createElement('span');
                 edit.className = 'right-icon glyphicon glyphicon-pencil';
                 edit.setAttribute('onclick', 'displayCards(storage.getCardsByBoard(' + currentBoard + '), storage, "' + currentBoard + '", "no-edit")');
-
                 //board content
                 var panelHead = document.createElement('div');
                 panelHead.className = colourPicker(i % 6) + ' panel-heading';
@@ -49,25 +44,20 @@ function displayBoards(boards, storage){
 function displayCards(cards, storage, boardID, editID){
     //reset content
     document.getElementById("boards_div").innerHTML = "";
-
     //board tile
     var colDiv = document.createElement('div');
     colDiv.className = 'col-xs-12 col-sm-6 col-md-4 col-lg-3 col-xl-2';
-
     //board panel
     var panelDiv = document.createElement('div');
     panelDiv.className = 'panel panel-default';
-
     //board content
     var panelHead = document.createElement('div');
     panelHead.className = colourPicker(storage.getBoard(boardID).colour) + ' panel-heading';
-
     //back button
     var backBtn = document.createElement('span');
     backBtn.className = 'glyphicon glyphicon-chevron-left';
     backBtn.id = 'back-button';
     backBtn.setAttribute('onclick', 'displayBoards(storage.getBoards(), storage)');
-
     //cards container
     var panelBody = document.createElement('div');
     panelBody.className ='panel-body';
@@ -85,19 +75,16 @@ function displayCards(cards, storage, boardID, editID){
                 var listItem = document.createElement('li');
                 listItem.className = 'list-group-item';
                 listItem.innerHTML = cards[i].title;
-
                 //delete button
                 var remove = document.createElement('span');
                 remove.className = 'right-icon glyphicon glyphicon-remove';
                 remove.setAttribute('data-toggle', 'modal');
                 remove.setAttribute('data-target', '#confModal');
                 remove.setAttribute('onclick', 'confModalFunc("' + boardID + '", "' + cards[i].id + '")');
-
                 //edit button
                 var edit = document.createElement('span');
                 edit.className = 'right-icon glyphicon glyphicon-pencil';
                 edit.setAttribute('onclick', 'displayCards(storage.getCardsByBoard(' + boardID + '), storage,  "' + boardID + '", "' + cards[i].id + '")');
-
                 //insert card to list
                 listItem.appendChild(remove);
                 listItem.appendChild(edit);
@@ -114,7 +101,6 @@ function displayCards(cards, storage, boardID, editID){
     panelDiv.appendChild(panelBody);
     colDiv.appendChild(panelDiv);
     document.getElementById("boards_div").appendChild(colDiv);
-    document.body.setAttribute('onkeydown', "bSpaceHotkey()");
     if (editID === 'no-edit'){
         newButton(boardID, storage);
     } else {
@@ -154,22 +140,8 @@ function newButton(buttonType, storage){
     };
     plusFrame.setAttribute('onclick', 'createTitle("storage", "' + buttonType + '")');
     appendTo.appendChild(plusFrame);
-    document.body.setAttribute('onkeyup', 'iHotkey("' + buttonType + '")');
+    document.body.setAttribute('onkeyup', 'hotkeyFunction("' + buttonType + '")');
 
-};
-
-function checkAvailable(input) {
-    //input validator
-    if (input === "title") {
-        var button = document.getElementById('save-button');
-    } else {
-        var button = document.getElementById('save-edit');
-    };
-    if (document.getElementById(input).value.replace( /\s/g, "") !== ''){
-        button.disabled = false;
-    } else {
-        button.disabled = true;
-    };
 };
 
 function replace(boardID){
@@ -194,18 +166,15 @@ function getRemoveButton(type, boardID){
     return removeButton;
 }
 
-function getSaveButton(type, boardID, cardID){
+function getSaveButton(boardID, cardID){
     var saveButton = document.createElement('button');
     saveButton.type = 'button';
     saveButton.className = 'btn btn-primary';
     saveButton.innerHTML = 'Save';
-    if (type === 'save'){
+    if (typeof cardID === 'undefined'){
         saveButton.id = 'save-button';
-        if (boardID === 'boards'){
-            saveButton.setAttribute('onclick', 'storage.saveBoard()');
-        } else {
-            saveButton.setAttribute('onclick', 'storage.saveCard("' + boardID + '")');
-        };
+        var onClick = boardID === 'boards' ? 'storage.saveBoard()' : 'storage.saveCard("' + boardID + '")';
+        saveButton.setAttribute('onclick', onClick);
         saveButton.disabled = true;
     } else {
         saveButton.id = 'save-edit';
@@ -218,17 +187,16 @@ function getInputField(type, card){
     var inputField = document.createElement('input');
     inputField.type = 'text';
     inputField.className = 'form-control';
-    if (type === 'save'){
-        inputField.id = 'title';
+    inputField.id = type;
+    inputField.setAttribute('onkeyup', 'checkAvailable("' + type + '")');
+    if (type === 'title'){
         inputField.setAttribute('onkeydown', "if (event.keyCode == 13) {document.getElementById('save-button').click();}\
                                 else if (event.keyCode == 27) {document.getElementById('remove-button').click();}");
-        inputField.setAttribute('onkeyup', 'checkAvailable("title")');
     } else {
         inputField.id = 'edit-title';
         inputField.value = card.title;
         inputField.setAttribute('onkeydown', "if (event.keyCode == 13) {document.getElementById('save-edit').click();}\
                                 else if (event.keyCode == 27) {document.getElementById('remove-edit').click();}");
-        inputField.setAttribute('onkeyup', 'checkAvailable("edit-title")');
     };
     return inputField;
 };
@@ -242,12 +210,12 @@ function createTitle(storage, buttonType){
     //remove button
     var removeButton = getRemoveButton('save', buttonType);
     //create button
-    var saveButton = getSaveButton('save', buttonType);
+    var saveButton = getSaveButton(buttonType);
     //button placing
     var buttonSpan = document.createElement('span');
     buttonSpan.className = 'input-group-btn';
     //input for create
-    var inputField = getInputField('save');
+    var inputField = getInputField('title');
     //form placing
     var inputDiv = document.createElement('div');
     inputDiv.className = 'input-group';
@@ -285,12 +253,12 @@ function editTitle(boardID, card){
     //remove button
     var removeButton = getRemoveButton('edit', boardID);
     //create button
-    var saveButton = getSaveButton('edit', boardID, card.id);
+    var saveButton = getSaveButton(boardID, card.id);
     //button placing
     var buttonSpan = document.createElement('span');
     buttonSpan.className = 'input-group-btn';
     //input for create
-    var inputField = getInputField('edit', card);
+    var inputField = getInputField('edit-title', card);
     //form placing
     var inputDiv = document.createElement('div');
     inputDiv.className = 'input-group';
@@ -309,9 +277,6 @@ function editTitle(boardID, card){
 };
 
 function confModalFunc(boardID, cardID){
-    if (typeof cardID === "undefined"){
-        document.getElementById('confDelButton').setAttribute('onclick', 'storage.deleteBoard("' + boardID + '")');
-    } else {
-        document.getElementById('confDelButton').setAttribute('onclick', 'storage.deleteCard("' + boardID + '", "' + cardID + '")');
-    };
+    var onClick = typeof cardID === 'undefined' ? 'storage.deleteBoard("' + boardID + '")' : 'storage.deleteCard("' + boardID + '", "' + cardID + '")';
+    document.getElementById('confDelButton').setAttribute('onclick', onClick);
 };

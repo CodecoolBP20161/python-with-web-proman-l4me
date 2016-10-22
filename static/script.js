@@ -3,11 +3,7 @@ var storage = new StorageState();
 function nextId(){
     //implement auto-increment
     num = localStorage.getItem('nextId');
-    if (num === null){
-        num = 0;
-    } else {
-        num = parseInt(num) + 1;
-    };
+    num = num === null ? 0 : parseInt(num) + 1;
     localStorage.setItem('nextId', JSON.stringify(num));
     return num;
 };
@@ -29,22 +25,26 @@ function ajaxRequest(requestURL){
         async: false,
         url: requestURL,
         dataType: 'json'
-    });;
+    });
 };
 
-function bSpaceHotkey(){
+function checkAvailable(input) {
+    //input validator
+    var button = input === "title" ? document.getElementById('save-button') : document.getElementById('save-edit');
+    button.disabled = document.getElementById(input).value.replace( /\s/g, "") !== '' ? false : true;
+};
+
+function hotkeyFunction(boardID){
     if (event.keyCode == 8){
-        if (document.getElementById('confModal').className === 'modal fade' && document.getElementById('plus')){
-            document.getElementById('back-button').click();
-        } else if (document.getElementById('confModal').className === 'modal fade in'){
+        if (document.getElementById('confModal').className === 'modal fade in'){
             document.getElementById('close-modal').click();
+        } else if (document.getElementById('plus')){
+            document.getElementById('back-button').click();
         };
-    };
-};
-
-function iHotkey(boardID){
-    if (event.keyCode == 73 && document.getElementById(boardID) && document.getElementById('confModal').className === 'modal fade'){
+    } else if (event.keyCode == 73 && document.getElementById(boardID) && document.getElementById('confModal').className === 'modal fade'){
         document.getElementById(boardID).click();
+    } else if (event.keyCode == 13 && document.getElementById('confModal').className === 'modal fade in'){
+        document.getElementById('confDelButton').click();
     };
 };
 
